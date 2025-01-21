@@ -1,0 +1,6 @@
+{
+  "appTitle": "shotflow",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}

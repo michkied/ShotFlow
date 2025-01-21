@@ -1,0 +1,9 @@
+.DS_Store
+**/.idea
+.dart_tool/
+.fvm/
+.vscode/settings.json
+*.log
+**/build
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
