@@ -4,7 +4,6 @@ import '../settings/settings_view.dart';
 import 'sample_item.dart';
 import 'sample_item_details_view.dart';
 import '../shotlist/shot_card.dart';
-import 'bottom_bar.dart';
 
 /// Displays a list of SampleItems.
 class SampleItemListView extends StatelessWidget {
@@ -45,7 +44,7 @@ class SampleItemListView extends StatelessWidget {
       //   ],
       // ),
 
-      bottomNavigationBar: BottomBar(),
+      // bottomNavigationBar: BottomBar(),
 
       // To work with lists that may contain a large number of items, it’s best
       // to use the ListView.builder constructor.
@@ -61,7 +60,7 @@ class SampleItemListView extends StatelessWidget {
                 itemCount: items.length,
                 itemBuilder: (BuildContext context, int index) {
                   final item = items[index];
-                  return CardExample();
+                  return Container();
                 },
                 // {
                 //   final item = items[index];

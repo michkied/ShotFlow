@@ -8,6 +8,7 @@ import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 import 'shotlist/shotlist_view.dart';
 import 'messages/messages_view.dart';
+import 'sequences/sequences_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -27,27 +28,66 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(),
             darkTheme: ThemeData.dark(),
             themeMode: settingsController.themeMode,
-            // theme: ThemeData(useMaterial3: true),
-            home: const NavigationExample(),
+
+            restorationScopeId: 'app',
+
+            // Provide the generated AppLocalizations to the MaterialApp. This
+            // allows descendant Widgets to display the correct translations
+            // depending on the user's locale.
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en', ''), // English, no country code
+            ],
+
+            // Use AppLocalizations to configure the correct application title
+            // depending on the user's locale.
+            //
+            // The appTitle is defined in .arb files found in the localization
+            // directory.
+            onGenerateTitle: (BuildContext context) =>
+                AppLocalizations.of(context)!.appTitle,
+
+            home: NavigationExample(settingsController: settingsController),
+
+            // Define a function to handle named routes in order to support
+            // Flutter web url navigation and deep linking.
+            // onGenerateRoute: (RouteSettings routeSettings) {
+            //   return MaterialPageRoute<void>(
+            //     settings: routeSettings,
+            //     builder: (BuildContext context) {
+            //       switch (routeSettings.name) {
+            //         case SettingsView.routeName:
+            //           return SettingsView(controller: settingsController);
+            //         case SampleItemDetailsView.routeName:
+            //           return const SampleItemDetailsView();
+            //         case SampleItemListView.routeName:
+            //         default:
+            //           return NavigationExample(
+            //               settingsController: settingsController);
+            //       }
+            //     },
+            //   );
+            // },
           );
         });
   }
 }
 
 class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
+  const NavigationExample({super.key, required this.settingsController});
+  final SettingsController settingsController;
 
   @override
   State<NavigationExample> createState() => _NavigationExampleState();
 }
 
 class _NavigationExampleState extends State<NavigationExample> {
-  _NavigationExampleState({
-    required this.settingsController,
-  });
-
-  final SettingsController settingsController;
-  int currentPageIndex = 0;
+  int currentPageIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +119,10 @@ class _NavigationExampleState extends State<NavigationExample> {
                 isLabelVisible: false, child: Icon(Icons.videocam_outlined)),
             label: 'Shotlist',
           ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.playlist_play),
+          //   label: 'Sequences',
+          // ),
           NavigationDestination(
             selectedIcon: Icon(Icons.settings),
             icon: Icon(Icons.settings_outlined),
@@ -89,27 +133,10 @@ class _NavigationExampleState extends State<NavigationExample> {
       body: AnimatedSwitcher(
         duration: Duration(milliseconds: 300),
         child: <Widget>[
+          // SequencesView(),
           MessagesView(),
           ShotlistView(),
-          SettingsView(controller: settingsController),
-
-          /// Home page
-          // Card(
-          //   shadowColor: Colors.transparent,
-          //   margin: const EdgeInsets.all(8.0),
-          //   child: SizedBox.expand(
-          //     child: Center(
-          //       child: Text(
-          //         'Home page',
-          //         style: theme.textTheme.titleLarge,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-          /// Notifications pag
-
-          /// Messages page
+          SettingsView(controller: widget.settingsController),
         ][currentPageIndex],
       ),
     );
