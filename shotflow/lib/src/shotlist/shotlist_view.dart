@@ -34,6 +34,7 @@ class _ShotlistViewState extends State<ShotlistView> {
 
   late ScrollController _scrollController;
   bool _showBackToTopButton = false;
+  bool _isScrollLocked = true;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _ShotlistViewState extends State<ShotlistView> {
           ScrollDirection.idle) {
         setState(() {
           _showBackToTopButton = true;
+          _isScrollLocked = false;
         });
       }
     });
@@ -64,6 +66,7 @@ class _ShotlistViewState extends State<ShotlistView> {
     );
     setState(() {
       _showBackToTopButton = false;
+      _isScrollLocked = true;
     });
   }
 
