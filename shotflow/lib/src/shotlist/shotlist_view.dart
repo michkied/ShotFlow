@@ -87,7 +87,8 @@ class _ShotlistViewState extends State<ShotlistView> {
                           const SizedBox(height: 5),
                       itemBuilder: (BuildContext context, int index) {
                         return ShotCard(
-                          isLive: index == connection.currentlyLive,
+                          operatorId: connection.operatorId,
+                          currentlyLive: connection.currentlyLive,
                           entry: connection.shotlist[index],
                         );
                       },

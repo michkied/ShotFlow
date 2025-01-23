@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -80,62 +81,33 @@ class WebSocketServer
 
         Console.WriteLine("Token verified. Connection established.");
         
-        responseMessage = """
-                          {
-                                "type": "shotlist_update",
-                                "data": [
-                                    {
-                                        "id": 0,
-                                        "title": "Drums",
-                                        "operator_id": 1,
-                                        "operator_name": "Alice",
-                                        "duration": 5
-                                    },
-                                    {
-                                        "id": 1,
-                                        "title": "Violin",
-                                        "operator_id": 2,
-                                        "operator_name": "Bob",
-                                        "duration": 4
-                                    },
-                                    {
-                                        "id": 2,
-                                        "title": "Flute",
-                                        "operator_id": 3,
-                                        "operator_name": "Charlie",
-                                        "duration": 6
-                                    },
-                                    {
-                                        "id": 3,
-                                        "title": "Trumpet",
-                                        "operator_id": 4,
-                                        "operator_name": "David",
-                                        "duration": 3
-                                    },
-                                    {
-                                        "id": 4,
-                                        "title": "Cello",
-                                        "operator_id": 5,
-                                        "operator_name": "Eve",
-                                        "duration": 7
-                                    },
-                                    {
-                                        "id": 5,
-                                        "title": "Piano",
-                                        "operator_id": 6,
-                                        "operator_name": "Frank",
-                                        "duration": 5
-                                    },
-                                    {
-                                        "id": 6,
-                                        "title": "Clarinet",
-                                        "operator_id": 7,
-                                        "operator_name": "Grace",
-                                        "duration": 4
-                                    }
-                                ]
-                          }
-                          """;
+        var data = new[]
+        {
+            new { id = 0, title = "Drums", operator_id = 1, operator_name = "Alice", duration = 5 },
+            new { id = 1, title = "Violin", operator_id = 2, operator_name = "Bob", duration = 4 },
+            new { id = 2, title = "Flute", operator_id = 3, operator_name = "Charlie", duration = 6 },
+            new { id = 3, title = "Trumpet", operator_id = 4, operator_name = "David", duration = 3 },
+            new { id = 4, title = "Cello", operator_id = 5, operator_name = "Eve", duration = 7 },
+            new { id = 5, title = "Piano", operator_id = 6, operator_name = "Frank", duration = 5 },
+            new { id = 6, title = "Clarinet", operator_id = 7, operator_name = "Grace", duration = 4 },
+            new { id = 7, title = "Cello", operator_id = 5, operator_name = "Eve", duration = 7 },
+            new { id = 8, title = "Piano", operator_id = 6, operator_name = "Frank", duration = 5 },
+            new { id = 9, title = "Drums", operator_id = 1, operator_name = "Alice", duration = 5 },
+            new { id = 10, title = "Violin", operator_id = 2, operator_name = "Bob", duration = 4 },
+            new { id = 11, title = "Flute", operator_id = 3, operator_name = "Charlie", duration = 6 },
+            new { id = 12, title = "Trumpet", operator_id = 4, operator_name = "David", duration = 3 },
+        };
+        var shotlistUpdate = new
+        {
+            type = "shotlist_update",
+            data
+        };
+        responseMessage = JsonSerializer.Serialize(shotlistUpdate);
+        responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
+        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
+            CancellationToken.None);
+        
+        responseMessage = """{"type": "operator_assign", "operator_id": 1}""";
         responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
         await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
             CancellationToken.None);
@@ -144,7 +116,7 @@ class WebSocketServer
         {
             try
             {
-                responseMessage = $"{{\"type\": \"shotlist_jump\", \"currently_live\": {i % 7}}}";
+                responseMessage = $"{{\"type\": \"shotlist_jump\", \"currently_live\": {i % data.Length}}}";
                 responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
                 await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
                 i++;
