@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
+import 'package:shotflow/src/connection/connection_controller.dart';
 import 'shot_card.dart';
 
 class ShotlistView extends StatefulWidget {
@@ -10,31 +13,10 @@ class ShotlistView extends StatefulWidget {
 }
 
 class _ShotlistViewState extends State<ShotlistView> {
-  final int isLive = 7;
-
-  List<(String, String)> items = [
-    ('Shot 1', 'Operator 1'),
-    ('Strings', 'Alice'),
-    ('Woodwinds', 'Bob'),
-    ('Brass', 'Charlie'),
-    ('Percussion', 'David'),
-    ('Keyboard', 'Eve'),
-    ('Guitar', 'Frank'),
-    ('Bass', 'Grace'),
-    ('Vocals', 'Heidi'),
-    ('Strings', 'Alice'),
-    ('Woodwinds', 'Bob'),
-    ('Brass', 'Charlie'),
-    ('Percussion', 'David'),
-    ('Keyboard', 'Eve'),
-    ('Guitar', 'Frank'),
-    ('Bass', 'Grace'),
-    ('Vocals', 'Heidi')
-  ];
-
   late ScrollController _scrollController;
   bool _showBackToTopButton = false;
   bool _isScrollLocked = true;
+  int _currentlyLive = 7;
 
   @override
   void initState() {
@@ -60,7 +42,7 @@ class _ShotlistViewState extends State<ShotlistView> {
 
   void _scrollToLive() {
     _scrollController.animateTo(
-      isLive * 60, // Scroll to the top
+      _currentlyLive * 60,
       duration: Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
@@ -72,35 +54,60 @@ class _ShotlistViewState extends State<ShotlistView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsetsDirectional.all(16),
-            sliver: SliverList.separated(
-              itemCount: items.length,
-              separatorBuilder: (context, _) => const SizedBox(height: 5),
-              itemBuilder: (BuildContext context, int index) {
-                return ShotCard(
-                    isLive: index == isLive,
-                    index: index + 1,
-                    title: items[index].$1,
-                    operator: items[index].$2);
-              },
+    return Stack(
+      children: [
+        Consumer<ConnectionController>(
+          builder: (context, connection, child) {
+            return Builder(builder: (context) {
+              if (connection.shotlist.isEmpty) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              _currentlyLive = connection.currentlyLive;
+              if (_isScrollLocked) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  _scrollController.animateTo(
+                    connection.currentlyLive *
+                        (context.size!.height / connection.shotlist.length),
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                });
+              }
+
+              return CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsetsDirectional.all(16),
+                    sliver: SliverList.separated(
+                      itemCount: connection.shotlist.length,
+                      separatorBuilder: (context, _) =>
+                          const SizedBox(height: 5),
+                      itemBuilder: (BuildContext context, int index) {
+                        return ShotCard(
+                          isLive: index == connection.currentlyLive,
+                          entry: connection.shotlist[index],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            });
+          },
+        ),
+        if (_showBackToTopButton)
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: _scrollToLive,
+              child: Icon(Icons.lock_outline),
             ),
           ),
-        ],
-      ),
-      if (_showBackToTopButton)
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: FloatingActionButton(
-            onPressed: _scrollToLive,
-            child: Icon(Icons.lock_outline),
-          ),
-        ),
-    ]);
+      ],
+    );
   }
 }

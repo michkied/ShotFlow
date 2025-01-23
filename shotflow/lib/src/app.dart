@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
-import 'sample_feature/sample_item_details_view.dart';
-import 'sample_feature/sample_item_list_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 import 'shotlist/shotlist_view.dart';
 import 'messages/messages_view.dart';
-import 'sequences/sequences_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -52,7 +50,7 @@ class MyApp extends StatelessWidget {
             onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
 
-            home: NavigationExample(settingsController: settingsController),
+            home: MainNavigationBar(settingsController: settingsController),
 
             // Define a function to handle named routes in order to support
             // Flutter web url navigation and deep linking.
@@ -78,15 +76,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key, required this.settingsController});
+class MainNavigationBar extends StatefulWidget {
+  const MainNavigationBar({super.key, required this.settingsController});
   final SettingsController settingsController;
 
   @override
-  State<NavigationExample> createState() => _NavigationExampleState();
+  State<MainNavigationBar> createState() => _MainNavigationBarState();
 }
 
-class _NavigationExampleState extends State<NavigationExample> {
+class _MainNavigationBarState extends State<MainNavigationBar> {
   int currentPageIndex = 1;
 
   @override

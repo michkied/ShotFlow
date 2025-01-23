@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:provider/provider.dart';
 
 import 'src/app.dart';
 import 'src/settings/settings_controller.dart';
 import 'src/settings/settings_service.dart';
+import 'src/connection/connection_controller.dart';
+import 'src/connection/connection_service.dart';
 
 void main() async {
   // Set up the SettingsController, which will glue user settings to multiple
@@ -13,8 +17,17 @@ void main() async {
   // This prevents a sudden theme change when the app is first displayed.
   await settingsController.loadSettings();
 
+  // final wsChannel = WebSocketChannel.connect(
+  //   Uri.parse('wss://echo.websocket.events'),
+  // );
+
+  final connectionController =
+      ConnectionController(ConnectionService('ws://localhost:5000/', 'abc'));
+
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
-  runApp(MyApp(settingsController: settingsController));
+  runApp(ChangeNotifierProvider(
+      create: (context) => connectionController,
+      child: MyApp(settingsController: settingsController)));
 }
