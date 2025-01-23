@@ -18,3 +18,9 @@ class ShotlistEntry {
     );
   }
 }
+
+enum ConnectionStatus {
+  success,
+  invalidToken,
+  connectionError,
+}

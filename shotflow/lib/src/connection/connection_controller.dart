@@ -6,19 +6,14 @@ import 'dart:convert';
 
 import 'connection_service.dart';
 
-/// A class that many Widgets can interact with to read user settings, update
-/// user settings, or listen to user settings changes.
-///
-/// Controllers glue Data Services to Flutter Widgets. The SettingsController
-/// uses the SettingsService to store and retrieve user settings.
 class ConnectionController with ChangeNotifier {
-  ConnectionController(this._connectionService) {
+  ConnectionController() {
+    _connectionService = ConnectionService();
     _subscription = _connectionService.stream.listen(
       (event) {
         debugPrint(event.toString());
         try {
-          parseMessage(event.toString());
-          notifyListeners(); // Notify listeners of the change
+          _parseMessage(event.toString());
         } catch (e) {
           debugPrint('Error parsing JSON: $e');
         }
@@ -30,11 +25,9 @@ class ConnectionController with ChangeNotifier {
         debugPrint('ConnectionService Error: $error');
       },
     );
-
-    _connectionService.connect();
   }
 
-  void parseMessage(String message) {
+  void _parseMessage(String message) {
     try {
       final Map<String, dynamic> jsonData = jsonDecode(message);
       switch (jsonData['type'] as String) {
@@ -51,13 +44,13 @@ class ConnectionController with ChangeNotifier {
         default:
           throw Exception('Unknown message type');
       }
-      notifyListeners(); // Notify listeners of the change
+      notifyListeners();
     } catch (e) {
       debugPrint('Error parsing JSON: $e');
     }
   }
 
-  final ConnectionService _connectionService;
+  late final ConnectionService _connectionService;
   late StreamSubscription _subscription;
 
   int _currentlyLive = 0;
@@ -78,6 +71,11 @@ class ConnectionController with ChangeNotifier {
                   _operatorId
               ? Colors.green
               : Colors.transparent;
+
+  Future<ConnectionStatus> connect(String url, String token) {
+    _connectionService.setCredentials(url, token);
+    return _connectionService.connect();
+  }
 
   @override
   void dispose() {

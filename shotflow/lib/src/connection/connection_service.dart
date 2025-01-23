@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ConnectionService {
-  ConnectionService(this.url, this.token);
+import 'types.dart';
 
-  String url;
-  String token;
+class ConnectionService {
+  ConnectionService();
+
+  late String url;
+  late String token;
 
   bool get isConnected => _isConnected;
   bool _isConnected = false;
@@ -17,25 +20,14 @@ class ConnectionService {
   final _outStreamSubject = BehaviorSubject<dynamic>();
   Stream<dynamic> get stream => _outStreamSubject.stream;
 
-  bool _isFirstRestart = false;
-  bool _isFollowingRestart = false;
-  bool _isManuallyClosed = false;
   bool _isVerified = false;
 
-  void _handleLostConnection() {
-    if (_isFirstRestart && !_isFollowingRestart) {
-      Future.delayed(const Duration(seconds: 3), () {
-        _isFollowingRestart = false;
-        connect();
-      });
-      _isFollowingRestart = true;
-    } else {
-      _isFirstRestart = true;
-      connect();
-    }
+  void setCredentials(String url, String token) {
+    this.url = url;
+    this.token = token;
   }
 
-  void connect() async {
+  Future<ConnectionStatus> connect() async {
     _isVerified = false;
     _channel = WebSocketChannel.connect(
       Uri.parse(url),
@@ -43,49 +35,52 @@ class ConnectionService {
     try {
       await _channel.ready;
     } catch (e) {
-      print('Error connecting: $e');
-      _handleLostConnection();
-      return;
+      debugPrint('Error connecting: $e');
+      return ConnectionStatus.connectionError;
     }
 
     _channel.sink.add(token);
     _isConnected = true;
-    _isManuallyClosed = false;
+
+    final completer = Completer<ConnectionStatus>();
 
     _subscription = _channel.stream.listen(
       (event) {
         if (!_isVerified) {
           if (event.toString() == 'ok') {
             _isVerified = true;
+            completer.complete(ConnectionStatus.success);
           } else {
-            _isVerified = false;
+            completer.complete(ConnectionStatus.invalidToken);
           }
           return;
         }
-        _isFirstRestart = false;
         _outStreamSubject.add(event);
       },
       onError: (error) {
-        print('Connection Error: $error');
+        debugPrint('Connection Error: $error');
         _isConnected = false;
         _subscription.cancel();
-        _handleLostConnection();
+        if (!completer.isCompleted) {
+          completer.complete(ConnectionStatus.connectionError);
+        }
       },
       onDone: () {
-        print('Connection closed');
+        debugPrint('Connection closed');
         _isConnected = false;
         _subscription.cancel();
-        if (!_isManuallyClosed) {
-          _handleLostConnection();
+        if (!completer.isCompleted) {
+          completer.complete(ConnectionStatus.connectionError);
         }
       },
     );
+
+    return completer.future;
   }
 
   void sendMessage(String message) => _channel.sink.add(message);
 
   void disconnect() {
-    _isManuallyClosed = true;
     _subscription.cancel();
     _channel.sink.close();
   }

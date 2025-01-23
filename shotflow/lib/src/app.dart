@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'home.dart';
 import 'settings/settings_controller.dart';
+import 'login/login_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -40,7 +41,22 @@ class MyApp extends StatelessWidget {
         onGenerateTitle: (BuildContext context) =>
             AppLocalizations.of(context)!.appTitle,
 
-        home: Home(),
+        home: LoginView(),
+        onGenerateRoute: (RouteSettings routeSettings) {
+          return MaterialPageRoute<void>(
+            settings: routeSettings,
+            builder: (BuildContext context) {
+              switch (routeSettings.name) {
+                case '/home':
+                  return HomeView();
+                case '/login':
+                  return LoginView();
+                default:
+                  return LoginView();
+              }
+            },
+          );
+        },
       );
     });
   }
