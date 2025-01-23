@@ -42,16 +42,6 @@ class ShotCard extends StatelessWidget {
             ),
           ],
         ),
-        // child: ListTile(
-        //   leading: Text(widget.index.toString(),
-        //       style: const TextStyle(fontSize: 25)),
-        //   contentPadding: isLive
-        //       ? const EdgeInsets.all(16.0)
-        //       : const EdgeInsets.symmetric(horizontal: 16.0),
-        //   title: Text(widget.title, style: const TextStyle(fontSize: 20)),
-        //   // subtitle: Text(widget.operator),
-        //   onTap: () => setState(() => isLive = !isLive),
-        // ),
       ),
     );
   }

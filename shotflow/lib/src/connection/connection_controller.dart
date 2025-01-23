@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shotflow/src/connection/types.dart';
 import 'dart:convert';
 
 import 'connection_service.dart';
+import 'types.dart';
 
 class ConnectionController with ChangeNotifier {
   ConnectionController() {
@@ -25,6 +25,38 @@ class ConnectionController with ChangeNotifier {
         debugPrint('ConnectionService Error: $error');
       },
     );
+
+    _status = _connectionService.statusStream.listen(
+      (event) {
+        _isReconnecting = false;
+        notifyListeners();
+      },
+      onDone: () {
+        debugPrint('Service status stream closed');
+      },
+      onError: (error) {
+        debugPrint('ConnectionService Error: $error');
+      },
+    );
+
+    _connectionService.init().then((status) {
+      switch (status) {
+        case ConnectionResult.success:
+          debugPrint('Connected');
+          notifyListeners();
+          break;
+        case ConnectionResult.invalidToken:
+          debugPrint('Invalid token');
+          _isReconnecting = false;
+          notifyListeners();
+          break;
+        case ConnectionResult.connectionError:
+          debugPrint('Connection error');
+          _isReconnecting = false;
+          notifyListeners();
+          break;
+      }
+    });
   }
 
   void _parseMessage(String message) {
@@ -52,6 +84,12 @@ class ConnectionController with ChangeNotifier {
 
   late final ConnectionService _connectionService;
   late StreamSubscription _subscription;
+  late StreamSubscription _status;
+
+  bool get isConnected => _connectionService.isConnected;
+
+  bool _isReconnecting = true;
+  bool get isReconnecting => _isReconnecting;
 
   int _currentlyLive = 0;
   int get currentlyLive => _currentlyLive;
@@ -72,9 +110,20 @@ class ConnectionController with ChangeNotifier {
               ? Colors.green
               : Colors.transparent;
 
-  Future<ConnectionStatus> connect(String url, String token) {
-    _connectionService.setCredentials(url, token);
+  Future<ConnectionResult> connect(String url, String token) async {
+    _isReconnecting = false;
+    await _connectionService.setCredentials(url, token);
     return _connectionService.connect();
+  }
+
+  Future<void> reconnect() async {
+    _isReconnecting = true;
+    notifyListeners();
+    final status = await _connectionService.connect();
+    if (status != ConnectionResult.success) {
+      _isReconnecting = false;
+      notifyListeners();
+    }
   }
 
   @override

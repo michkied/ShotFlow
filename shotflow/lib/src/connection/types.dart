@@ -19,7 +19,7 @@ class ShotlistEntry {
   }
 }
 
-enum ConnectionStatus {
+enum ConnectionResult {
   success,
   invalidToken,
   connectionError,

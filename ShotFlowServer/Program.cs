@@ -107,7 +107,7 @@ class WebSocketServer
         await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
             CancellationToken.None);
         
-        responseMessage = """{"type": "operator_assign", "operator_id": 1}""";
+        responseMessage = """{"type": "operator_assign", "operator_id": 5}""";
         responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
         await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
             CancellationToken.None);

@@ -87,6 +87,71 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       ),
+      Consumer<ConnectionController>(builder: (context, connection, child) {
+        if (connection.isConnected) {
+          return Container();
+        }
+        return Positioned.fill(
+          child: Container(
+            color: Colors.black87,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  DefaultTextStyle(
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                    child: Text('Connection lost.'),
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    child: Text('Go to login page',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  SizedBox(height: 60),
+                  if (connection.isReconnecting) ...[
+                    DefaultTextStyle(
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w100),
+                      child: Text('Attempting to reconnect...'),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 10,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ] else ...[
+                    DefaultTextStyle(
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w100),
+                      child: Text("Can't connect to the server."),
+                    ),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        connection.reconnect();
+                      },
+                      child: Text('Try again',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ]
+                ],
+              ),
+            ),
+          ),
+        );
+      })
     ]);
   }
 }

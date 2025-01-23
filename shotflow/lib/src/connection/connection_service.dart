@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -8,26 +9,40 @@ import 'types.dart';
 class ConnectionService {
   ConnectionService();
 
-  late String url;
-  late String token;
+  Future<ConnectionResult> init() async {
+    url = await storage.read(key: 'url') ?? '';
+    token = await storage.read(key: 'token') ?? '';
+    return await connect();
+  }
+
+  final storage = FlutterSecureStorage();
+
+  String url = '';
+  String token = '';
 
   bool get isConnected => _isConnected;
   bool _isConnected = false;
 
   late WebSocketChannel _channel;
   late StreamSubscription _subscription;
+  bool _initialized = false;
 
   final _outStreamSubject = BehaviorSubject<dynamic>();
   Stream<dynamic> get stream => _outStreamSubject.stream;
 
+  final _statusStreamSubject = BehaviorSubject<dynamic>();
+  Stream<dynamic> get statusStream => _statusStreamSubject.stream;
+
   bool _isVerified = false;
 
-  void setCredentials(String url, String token) {
+  Future<void> setCredentials(String url, String token) async {
     this.url = url;
     this.token = token;
+    await storage.write(key: 'url', value: url);
+    await storage.write(key: 'token', value: token);
   }
 
-  Future<ConnectionStatus> connect() async {
+  Future<ConnectionResult> connect() async {
     _isVerified = false;
     _channel = WebSocketChannel.connect(
       Uri.parse(url),
@@ -36,22 +51,22 @@ class ConnectionService {
       await _channel.ready;
     } catch (e) {
       debugPrint('Error connecting: $e');
-      return ConnectionStatus.connectionError;
+      return ConnectionResult.connectionError;
     }
 
     _channel.sink.add(token);
     _isConnected = true;
 
-    final completer = Completer<ConnectionStatus>();
+    final completer = Completer<ConnectionResult>();
 
     _subscription = _channel.stream.listen(
       (event) {
         if (!_isVerified) {
           if (event.toString() == 'ok') {
             _isVerified = true;
-            completer.complete(ConnectionStatus.success);
+            completer.complete(ConnectionResult.success);
           } else {
-            completer.complete(ConnectionStatus.invalidToken);
+            completer.complete(ConnectionResult.invalidToken);
           }
           return;
         }
@@ -61,19 +76,23 @@ class ConnectionService {
         debugPrint('Connection Error: $error');
         _isConnected = false;
         _subscription.cancel();
+        _statusStreamSubject.add('disconnected'); // Notify listeners
         if (!completer.isCompleted) {
-          completer.complete(ConnectionStatus.connectionError);
+          completer.complete(ConnectionResult.connectionError);
         }
       },
       onDone: () {
         debugPrint('Connection closed');
         _isConnected = false;
         _subscription.cancel();
+        _statusStreamSubject.add('disconnected'); // Notify listeners
         if (!completer.isCompleted) {
-          completer.complete(ConnectionStatus.connectionError);
+          completer.complete(ConnectionResult.connectionError);
         }
       },
     );
+
+    _initialized = true;
 
     return completer.future;
   }
@@ -83,10 +102,13 @@ class ConnectionService {
   void disconnect() {
     _subscription.cancel();
     _channel.sink.close();
+    _statusStreamSubject.add('disconnected'); // Notify listeners
   }
 
-  void restart() {
-    disconnect();
+  void reconnect() {
+    if (_initialized) {
+      disconnect();
+    }
     connect();
   }
 
@@ -94,5 +116,6 @@ class ConnectionService {
     _subscription.cancel();
     _channel.sink.close();
     _outStreamSubject.close();
+    _statusStreamSubject.close();
   }
 }

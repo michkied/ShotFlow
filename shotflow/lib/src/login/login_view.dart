@@ -15,19 +15,19 @@ class LoginView extends StatelessWidget {
     final url = urlController.text;
     final token = tokenController.text;
 
-    ConnectionStatus status = await connection.connect(url, token);
+    ConnectionResult status = await connection.connect(url, token);
     if (!context.mounted) {
       return;
     }
 
     switch (status) {
-      case ConnectionStatus.success:
+      case ConnectionResult.success:
         Navigator.of(context).pushReplacementNamed('/home');
         break;
-      case ConnectionStatus.invalidToken:
+      case ConnectionResult.invalidToken:
         _showErrorMessage(context, 'Invalid token. Please try again.');
         break;
-      case ConnectionStatus.connectionError:
+      case ConnectionResult.connectionError:
         _showErrorMessage(context, 'Connection error. Please try again.');
         break;
     }

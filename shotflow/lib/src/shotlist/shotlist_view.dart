@@ -15,20 +15,17 @@ class ShotlistView extends StatefulWidget {
 class _ShotlistViewState extends State<ShotlistView> {
   late ScrollController _scrollController;
   bool _showBackToTopButton = false;
-  bool _isScrollLocked = true;
-  int _currentlyLive = 7;
+  int _currentlyLive = 0;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      // Show or hide the button based on scroll position
       if (_scrollController.position.userScrollDirection !=
           ScrollDirection.idle) {
         setState(() {
           _showBackToTopButton = true;
-          _isScrollLocked = false;
         });
       }
     });
@@ -48,7 +45,6 @@ class _ShotlistViewState extends State<ShotlistView> {
     );
     setState(() {
       _showBackToTopButton = false;
-      _isScrollLocked = true;
     });
   }
 
@@ -60,12 +56,12 @@ class _ShotlistViewState extends State<ShotlistView> {
           builder: (context, connection, child) {
             return Builder(builder: (context) {
               if (connection.shotlist.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Center(
+                  child: Text("shhh... you're disturbing the silence"),
                 );
               }
               _currentlyLive = connection.currentlyLive;
-              if (_isScrollLocked) {
+              if (!_showBackToTopButton) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   _scrollController.animateTo(
                     connection.currentlyLive *
@@ -111,4 +107,7 @@ class _ShotlistViewState extends State<ShotlistView> {
       ],
     );
   }
+
+  // @override
+  // bool get wantKeepAlive => true;
 }
