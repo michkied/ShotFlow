@@ -20,7 +20,17 @@ class ShotCard extends StatelessWidget {
         margin:
             isLive ? null : EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         elevation: isLive ? 10 : 0,
-        color: operatorId == entry.operatorId ? Colors.blueAccent : null,
+        color: operatorId == entry.operatorId
+            ? Colors.blueAccent
+            : currentlyLive > entry.id
+                ? Colors.grey[800]
+                : null,
+        shape: isLive
+            ? RoundedRectangleBorder(
+                side: BorderSide(color: Colors.red, width: 5.0),
+                borderRadius: BorderRadius.circular(16.0),
+              )
+            : null,
         child: Row(
           children: [
             Padding(
