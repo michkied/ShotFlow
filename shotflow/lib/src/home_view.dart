@@ -58,32 +58,37 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
         ),
-        body: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
-          child: <Widget>[
-            // SequencesView(),
-            MessagesView(),
-            ShotlistView(),
-            Consumer<SettingsController>(builder: (context, settings, child) {
-              return SettingsView(controller: settings);
-            }),
-          ][currentPageIndex],
-        ),
-      ),
-      Positioned.fill(
-        child: IgnorePointer(
-          child: Consumer<ConnectionController>(
-            builder: (context, connection, child) {
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: connection.getTallyColor(), // Border color
-                    width: 4, // Border width
-                  ),
+        body: SafeArea(
+          child: Stack(children: [
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: <Widget>[
+                // SequencesView(),
+                MessagesView(),
+                ShotlistView(),
+                Consumer<SettingsController>(
+                    builder: (context, settings, child) {
+                  return SettingsView(controller: settings);
+                }),
+              ][currentPageIndex],
+            ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Consumer<ConnectionController>(
+                  builder: (context, connection, child) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: connection.getTallyColor(), // Border color
+                          width: 4, // Border width
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+          ]),
         ),
       ),
       Consumer<ConnectionController>(builder: (context, connection, child) {

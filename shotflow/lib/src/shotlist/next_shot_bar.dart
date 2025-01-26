@@ -52,7 +52,7 @@ class NextShotBar extends StatelessWidget {
                       top: 8.0, bottom: 8.0, left: 30, right: 10),
                   child: Text(
                     'in aprox.',
-                    style: TextStyle(fontWeight: FontWeight.w100, fontSize: 12),
+                    style: TextStyle(fontSize: 12),
                   ),
                 ),
                 Text(

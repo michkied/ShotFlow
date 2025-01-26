@@ -80,8 +80,10 @@ class _MessagesViewState extends State<MessagesView> {
                               vertical: 4.0, horizontal: 8.0),
                           decoration: BoxDecoration(
                             color: message.isOperator
-                                ? Colors.grey[800]
-                                : Colors.grey[900],
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainer,
                             borderRadius:
                                 BorderRadius.circular(16.0), // Rounded corners
                           ),
@@ -118,7 +120,9 @@ class _MessagesViewState extends State<MessagesView> {
                       controller: _controller,
                       decoration: InputDecoration(
                         hintText: 'Type a message',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(16.0))),
                       ),
                     ),
                   ),
