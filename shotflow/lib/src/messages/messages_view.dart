@@ -27,7 +27,7 @@ class _MessagesViewState extends State<MessagesView> {
 
   void _scrollToBottom() {
     scrollController.animateTo(
-      scrollController.position.maxScrollExtent + 100,
+      scrollController.position.maxScrollExtent + 200,
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeOut,
     );
@@ -41,6 +41,7 @@ class _MessagesViewState extends State<MessagesView> {
     return Consumer<ConnectionController>(
         builder: (context, connection, child) {
       final messages = connection.chatMessages;
+      connection.unreadMessages = 0;
       return Column(
         children: <Widget>[
           Expanded(

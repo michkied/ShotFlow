@@ -28,16 +28,19 @@ class _HomeViewState extends State<HomeView> {
             });
           },
           selectedIndex: currentPageIndex,
-          destinations: const <Widget>[
+          destinations: <Widget>[
             NavigationDestination(
-              selectedIcon: Badge(
-                // label: Text('2'),
-                child: Icon(Icons.message),
-              ),
-              icon: Badge(
-                label: Text('2'),
-                child: Icon(Icons.message_outlined),
-              ),
+              icon: Consumer<ConnectionController>(
+                  builder: (context, connection, child) {
+                if (connection.unreadMessages == 0) {
+                  return Icon(Icons.message_outlined);
+                }
+                return Badge(
+                  label: Text(connection.unreadMessages.toString()),
+                  child: Icon(Icons.message_outlined),
+                );
+              }),
+              selectedIcon: Icon(Icons.message),
               label: 'Messages',
             ),
             NavigationDestination(

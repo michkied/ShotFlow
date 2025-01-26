@@ -83,6 +83,7 @@ class ConnectionController with ChangeNotifier {
         case 'chat_message':
           final message = ChatMessage.fromJson(jsonData['message']);
           _chatMessages.add(message);
+          unreadMessages++;
 
         default:
           throw Exception('Unknown message type');
@@ -113,6 +114,8 @@ class ConnectionController with ChangeNotifier {
 
   List<ChatMessage> _chatMessages = [];
   List<ChatMessage> get chatMessages => _chatMessages;
+
+  int unreadMessages = 0;
 
   Color getTallyColor() {
     if (_shotlist.isEmpty) {

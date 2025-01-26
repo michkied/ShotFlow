@@ -16,7 +16,7 @@ class ShotlistView extends StatefulWidget {
 class _ShotlistViewState extends State<ShotlistView> {
   final _scrollController = ItemScrollController();
   bool _showBackToTopButton = false;
-  bool _isAutoScrolling = true;
+  bool _isAutoScrolling = false;
   int _currentlyLive = 0;
 
   void _scrollToLive() async {
@@ -48,7 +48,7 @@ class _ShotlistViewState extends State<ShotlistView> {
 
           SchedulerBinding.instance.addPostFrameCallback((_) {
             _currentlyLive = connection.currentlyLive;
-            if (!_showBackToTopButton) {
+            if (!_showBackToTopButton && !_isAutoScrolling) {
               _autoScroll();
             }
           });
@@ -69,8 +69,14 @@ class _ShotlistViewState extends State<ShotlistView> {
               itemCount: connection.shotlist.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 5.0, horizontal: 16.0),
+                  padding: index < connection.shotlist.length - 1
+                      ? const EdgeInsets.symmetric(
+                          vertical: 5.0, horizontal: 16.0)
+                      : EdgeInsets.only(
+                          top: 5.0,
+                          bottom: MediaQuery.sizeOf(context).height,
+                          left: 16.0,
+                          right: 16.0),
                   child: ShotCard(
                     operatorId: connection.operatorId,
                     currentlyLive: connection.currentlyLive,
