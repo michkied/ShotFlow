@@ -27,7 +27,6 @@ class _HomeViewState extends State<HomeView> {
               currentPageIndex = index;
             });
           },
-          indicatorColor: Colors.blueAccent,
           selectedIndex: currentPageIndex,
           destinations: const <Widget>[
             NavigationDestination(

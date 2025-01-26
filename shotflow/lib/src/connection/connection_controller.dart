@@ -115,10 +115,12 @@ class ConnectionController with ChangeNotifier {
   }
 
   (int, ShotlistEntry?) getNextEntry() {
+    int timeUntil = 0;
     for (int i = _currentlyLive; i < _shotlist.length; i++) {
       if (_shotlist[i].operatorId == _operatorId) {
-        return (i - _currentlyLive, _shotlist[i]);
+        return (timeUntil, _shotlist[i]);
       }
+      timeUntil += _shotlist[i].duration;
     }
     return (-1, null);
   }
