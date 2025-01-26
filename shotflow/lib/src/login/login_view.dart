@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
 import 'package:shotflow/src/login/qr_scan_view.dart';
@@ -63,13 +64,19 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Consumer<ConnectionController>(
-                builder: (context, connection, child) {
-              return Column(
+    return Consumer<ConnectionController>(
+      builder: (context, connection, child) {
+        if (connection.isConnected) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+          return Container();
+        }
+        return Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Icon(
@@ -160,11 +167,14 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  if (isLoggingIn) CircularProgressIndicator()
+                  if (connection.isReconnecting || isLoggingIn)
+                    CircularProgressIndicator()
                 ],
-              );
-            })),
-      ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

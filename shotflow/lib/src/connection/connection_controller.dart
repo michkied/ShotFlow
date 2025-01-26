@@ -147,6 +147,7 @@ class ConnectionController with ChangeNotifier {
   @override
   void dispose() {
     _subscription.cancel();
+    _status.cancel();
     connectionService.dispose();
     super.dispose();
   }

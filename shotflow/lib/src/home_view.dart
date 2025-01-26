@@ -80,7 +80,7 @@ class _HomeViewState extends State<HomeView> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: connection.getTallyColor(), // Border color
-                          width: 4, // Border width
+                          width: 6, // Border width
                         ),
                       ),
                     );
@@ -103,10 +103,7 @@ class _HomeViewState extends State<HomeView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   DefaultTextStyle(
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     child: Text('Connection lost.'),
                   ),
                   SizedBox(height: 10),
@@ -114,31 +111,24 @@ class _HomeViewState extends State<HomeView> {
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
                     },
-                    child: Text('Go to login page',
-                        style: TextStyle(color: Colors.white)),
+                    child: Text('Go to login page'),
                   ),
                   SizedBox(height: 60),
                   if (connection.isReconnecting) ...[
                     DefaultTextStyle(
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w100),
+                      style: TextStyle(fontSize: 14),
                       child: Text('Attempting to reconnect...'),
                     ),
                     SizedBox(height: 10),
                     SizedBox(
                       height: 10,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
+                      child: CircularProgressIndicator(),
                     ),
                   ] else ...[
                     DefaultTextStyle(
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w100),
+                        fontSize: 14,
+                      ),
                       child: Text("Can't connect to the server."),
                     ),
                     SizedBox(height: 10),
@@ -146,8 +136,7 @@ class _HomeViewState extends State<HomeView> {
                       onPressed: () {
                         connection.reconnect();
                       },
-                      child: Text('Try again',
-                          style: TextStyle(color: Colors.white)),
+                      child: Text('Try again'),
                     ),
                   ]
                 ],

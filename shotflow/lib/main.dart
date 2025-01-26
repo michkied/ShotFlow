@@ -16,9 +16,8 @@ void main() async {
 
   final storage = FlutterSecureStorage();
   final connectionService = ConnectionService(storage);
-  final connectionController = ConnectionController(
-      connectionService: connectionService, autoConnect: false);
-  await connectionService.init();
+  final connectionController =
+      ConnectionController(connectionService: connectionService);
 
   // SystemTheme.fallbackColor = Colors.blue;
   // await SystemTheme.accentColor.load();
@@ -28,6 +27,6 @@ void main() async {
       ChangeNotifierProvider(create: (context) => settingsController),
       ChangeNotifierProvider(create: (context) => connectionController),
     ],
-    child: MyApp(initialLogin: connectionService.isConnected),
+    child: MyApp(),
   ));
 }
