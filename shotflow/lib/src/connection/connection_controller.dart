@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -7,9 +6,9 @@ import 'connection_service.dart';
 import 'types.dart';
 
 class ConnectionController with ChangeNotifier {
-  ConnectionController({bool skipInit = false}) {
-    _connectionService = ConnectionService();
-    _subscription = _connectionService.stream.listen(
+  ConnectionController(
+      {required this.connectionService, bool autoConnect = true}) {
+    _subscription = connectionService.stream.listen(
       (event) {
         debugPrint(event.toString());
         try {
@@ -26,7 +25,7 @@ class ConnectionController with ChangeNotifier {
       },
     );
 
-    _status = _connectionService.statusStream.listen(
+    _status = connectionService.statusStream.listen(
       (event) {
         _isReconnecting = false;
         notifyListeners();
@@ -39,9 +38,11 @@ class ConnectionController with ChangeNotifier {
       },
     );
 
-    // if (skipInit) return;
+    if (!autoConnect) {
+      return;
+    }
 
-    _connectionService.init().then((status) {
+    connectionService.init().then((status) {
       switch (status) {
         case ConnectionResult.success:
           debugPrint('Connected');
@@ -84,11 +85,11 @@ class ConnectionController with ChangeNotifier {
     }
   }
 
-  late final ConnectionService _connectionService;
+  late final ConnectionService connectionService;
   late StreamSubscription _subscription;
   late StreamSubscription _status;
 
-  bool get isConnected => _connectionService.isConnected;
+  bool get isConnected => connectionService.isConnected;
 
   bool _isReconnecting = true;
   bool get isReconnecting => _isReconnecting;
@@ -129,14 +130,14 @@ class ConnectionController with ChangeNotifier {
 
   Future<ConnectionResult> connect(String url, String token) async {
     _isReconnecting = false;
-    await _connectionService.setCredentials(url, token);
-    return _connectionService.connect();
+    await connectionService.setCredentials(url, token);
+    return connectionService.connect();
   }
 
   Future<void> reconnect() async {
     _isReconnecting = true;
     notifyListeners();
-    final status = await _connectionService.connect();
+    final status = await connectionService.connect();
     if (status != ConnectionResult.success) {
       _isReconnecting = false;
       notifyListeners();
@@ -146,7 +147,7 @@ class ConnectionController with ChangeNotifier {
   @override
   void dispose() {
     _subscription.cancel();
-    _connectionService.dispose();
+    connectionService.dispose();
     super.dispose();
   }
 }

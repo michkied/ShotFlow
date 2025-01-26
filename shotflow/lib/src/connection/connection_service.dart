@@ -7,15 +7,18 @@ import 'package:rxdart/rxdart.dart';
 import 'types.dart';
 
 class ConnectionService {
-  ConnectionService();
+  ConnectionService(FlutterSecureStorage storage) : _storage = storage;
 
   Future<ConnectionResult> init() async {
-    url = await storage.read(key: 'url') ?? '';
-    token = await storage.read(key: 'token') ?? '';
+    url = await _storage.read(key: 'url') ?? '';
+    token = await _storage.read(key: 'token') ?? '';
+    if (url.isEmpty || token.isEmpty) {
+      return ConnectionResult.invalidToken;
+    }
     return await connect();
   }
 
-  final storage = FlutterSecureStorage();
+  FlutterSecureStorage _storage;
 
   String url = '';
   String token = '';
@@ -38,17 +41,20 @@ class ConnectionService {
   Future<void> setCredentials(String url, String token) async {
     this.url = url;
     this.token = token;
-    await storage.write(key: 'url', value: url);
-    await storage.write(key: 'token', value: token);
+    await _storage.write(key: 'url', value: url);
+    await _storage.write(key: 'token', value: token);
   }
 
   Future<ConnectionResult> connect() async {
+    if (_isConnected) {
+      disconnect();
+    }
     _isVerified = false;
     _channel = WebSocketChannel.connect(
       Uri.parse(url),
     );
     try {
-      await _channel.ready;
+      await _channel.ready.timeout(Duration(seconds: 5));
     } catch (e) {
       debugPrint('Error connecting: $e');
       return ConnectionResult.connectionError;

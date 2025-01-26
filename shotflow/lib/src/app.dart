@@ -12,7 +12,10 @@ import 'login/login_view.dart';
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
+    required this.initialLogin,
   });
+
+  final bool initialLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +69,9 @@ class MyApp extends StatelessWidget {
                 case '/qr_scan':
                   return QRViewExample();
                 default:
+                  if (initialLogin) {
+                    return HomeView();
+                  }
                   return LoginView();
               }
             },

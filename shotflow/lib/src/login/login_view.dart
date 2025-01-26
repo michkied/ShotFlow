@@ -1,17 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
+import 'package:shotflow/src/login/qr_scan_view.dart';
 
 import '../connection/types.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   final TextEditingController urlController = TextEditingController();
+
   final TextEditingController tokenController = TextEditingController();
 
-  LoginView({super.key});
+  bool isLoggingIn = false;
 
   Future<void> login(
       ConnectionController connection, BuildContext context) async {
+    setState(() {
+      isLoggingIn = true;
+    });
     final url = urlController.text;
     final token = tokenController.text;
 
@@ -31,6 +45,9 @@ class LoginView extends StatelessWidget {
         _showErrorMessage(context, 'Connection error. Please try again.');
         break;
     }
+    setState(() {
+      isLoggingIn = false;
+    });
   }
 
   void _showErrorMessage(BuildContext context, String message) {
@@ -49,89 +66,104 @@ class LoginView extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(
-                Icons.videocam,
-                size: 100.0,
-              ),
-              Text(
-                'ShotFlow',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 32.0),
-              TextField(
-                controller: urlController,
-                decoration: InputDecoration(
-                  labelText: 'URL',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: tokenController,
-                decoration: InputDecoration(
-                  labelText: 'Token',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 16.0),
-              Consumer<ConnectionController>(
+            padding: const EdgeInsets.all(16.0),
+            child: Consumer<ConnectionController>(
                 builder: (context, connection, child) {
-                  return ElevatedButton(
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    Icons.videocam,
+                    size: 100.0,
+                  ),
+                  Text(
+                    'ShotFlow',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 32.0),
+                  TextField(
+                    controller: urlController,
+                    decoration: InputDecoration(
+                      labelText: 'URL',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  TextField(
+                    controller: tokenController,
+                    decoration: InputDecoration(
+                      labelText: 'Token',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
                     onPressed: () => login(connection, context),
                     child: Text(
                       'Login',
                       style: TextStyle(color: Colors.white, fontSize: 16.0),
                     ),
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(28.0),
-                child: Text(
-                  'or',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle QR code scan logic here
-                  Navigator.of(context).pushReplacementNamed('/qr_scan');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                          Icon(Icons.qr_code, size: 30.0, color: Colors.white),
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Text(
+                      'or',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    Text('Scan QR Code',
-                        style: TextStyle(color: Colors.white, fontSize: 16.0)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final result = (await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => QRViewExample())))
+                          as String?;
+                      if (result != null) {
+                        try {
+                          final scanData = jsonDecode(result);
+                          urlController.text = scanData['url'];
+                          tokenController.text = scanData['token'];
+                          if (context.mounted) {
+                            login(connection, context);
+                          }
+                        } catch (e) {
+                          debugPrint('Error parsing QR Code JSON: $e');
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.qr_code,
+                              size: 30.0, color: Colors.white),
+                        ),
+                        Text('Scan QR Code',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16.0)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  if (isLoggingIn) CircularProgressIndicator()
+                ],
+              );
+            })),
       ),
     );
   }
