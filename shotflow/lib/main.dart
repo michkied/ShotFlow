@@ -8,10 +8,15 @@ import 'src/settings/settings_service.dart';
 import 'src/connection/connection_controller.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final settingsController = SettingsController(SettingsService());
   await settingsController.loadSettings();
 
-  final connectionController = ConnectionController();
+  final connectionController = ConnectionController(skipInit: true);
+
+  // SystemTheme.fallbackColor = Colors.blue;
+  // await SystemTheme.accentColor.load();
 
   runApp(MultiProvider(
     providers: [

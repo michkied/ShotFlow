@@ -110,6 +110,7 @@ class LoginView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle QR code scan logic here
+                  Navigator.of(context).pushReplacementNamed('/qr_scan');
                 },
                 style: ElevatedButton.styleFrom(
                   padding:

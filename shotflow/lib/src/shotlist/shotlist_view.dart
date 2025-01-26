@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shotflow/src/shotlist/next_shot_bar.dart';
 import 'shot_card.dart';
 
 class ShotlistView extends StatefulWidget {
@@ -13,101 +14,99 @@ class ShotlistView extends StatefulWidget {
 }
 
 class _ShotlistViewState extends State<ShotlistView> {
-  late ScrollController _scrollController;
+  final _scrollController = ItemScrollController();
   bool _showBackToTopButton = false;
+  bool _isAutoScrolling = true;
   int _currentlyLive = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection !=
-          ScrollDirection.idle) {
-        setState(() {
-          _showBackToTopButton = true;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLive() {
-    _scrollController.animateTo(
-      _currentlyLive * 60,
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+  void _scrollToLive() async {
+    await _autoScroll();
     setState(() {
       _showBackToTopButton = false;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Consumer<ConnectionController>(
-          builder: (context, connection, child) {
-            return Builder(builder: (context) {
-              if (connection.shotlist.isEmpty) {
-                return Center(
-                  child: Text("shhh... you're disturbing the silence"),
-                );
-              }
-              _currentlyLive = connection.currentlyLive;
-              if (!_showBackToTopButton) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  _scrollController.animateTo(
-                    connection.currentlyLive *
-                        (context.size!.height / connection.shotlist.length),
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
-                });
-              }
+  Future<void> _autoScroll() async {
+    _isAutoScrolling = true;
+    await _scrollController.scrollTo(
+        index: _currentlyLive,
+        alignment: 0.1,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut);
+    _isAutoScrolling = false;
+  }
 
-              return CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsetsDirectional.all(16),
-                    sliver: SliverList.separated(
-                      itemCount: connection.shotlist.length,
-                      separatorBuilder: (context, _) =>
-                          const SizedBox(height: 5),
-                      itemBuilder: (BuildContext context, int index) {
-                        return ShotCard(
-                          operatorId: connection.operatorId,
-                          currentlyLive: connection.currentlyLive,
-                          entry: connection.shotlist[index],
-                        );
-                      },
-                    ),
+  Widget getShotlistWidget() {
+    return Consumer<ConnectionController>(
+      builder: (context, connection, child) {
+        return Builder(builder: (context) {
+          if (connection.shotlist.isEmpty) {
+            return Center(
+              child: Text("shhh... you're disturbing the silence"),
+            );
+          }
+
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            _currentlyLive = connection.currentlyLive;
+            if (!_showBackToTopButton) {
+              _autoScroll();
+            }
+          });
+
+          return NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is ScrollUpdateNotification) {
+                if (!_showBackToTopButton && !_isAutoScrolling) {
+                  setState(() {
+                    _showBackToTopButton = true;
+                  });
+                }
+              }
+              return true;
+            },
+            child: ScrollablePositionedList.builder(
+              itemScrollController: _scrollController,
+              itemCount: connection.shotlist.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 5.0, horizontal: 16.0),
+                  child: ShotCard(
+                    operatorId: connection.operatorId,
+                    currentlyLive: connection.currentlyLive,
+                    entry: connection.shotlist[index],
                   ),
-                ],
-              );
-            });
-          },
-        ),
-        if (_showBackToTopButton)
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              onPressed: _scrollToLive,
-              child: Icon(Icons.lock_outline),
+                );
+              },
             ),
-          ),
-      ],
+          );
+        });
+      },
     );
   }
 
-  // @override
-  // bool get wantKeepAlive => true;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 10,
+        ),
+        Expanded(
+            child: Stack(children: [
+          getShotlistWidget(),
+          if (_showBackToTopButton)
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: FloatingActionButton(
+                onPressed: _scrollToLive,
+                child: Icon(Icons.lock_outline),
+              ),
+            ),
+        ])),
+        SizedBox(height: 70, child: NextShotBar())
+      ],
+    );
+  }
 }

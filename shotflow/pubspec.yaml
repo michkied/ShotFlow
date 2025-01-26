@@ -16,7 +16,10 @@ dependencies:
     sdk: flutter
   flutter_secure_storage: ^9.2.4
   provider: ^6.1.2
+  qr_code_scanner_plus: ^2.0.8+1
   rxdart: ^0.28.0
+  scrollable_positioned_list: ^0.3.8
+  system_theme: ^3.1.2
   web_socket_channel: ^3.0.2
 
 dev_dependencies:

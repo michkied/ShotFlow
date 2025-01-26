@@ -135,7 +135,7 @@ class WebSocketServer
 
     public static void Main(string[] args)
     {
-        string uri = "http://localhost:5000/";
+        string uri = "http://*:5000/";
         Task.Run(() => Start(uri));
 
         Console.WriteLine("Press Enter to stop the server...");
