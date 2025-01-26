@@ -100,15 +100,28 @@ class ConnectionController with ChangeNotifier {
   int _operatorId = 0;
   int get operatorId => _operatorId;
 
-  Color get tallyColor => _shotlist.isEmpty
-      ? Colors.transparent
-      : _shotlist[_currentlyLive].operatorId == _operatorId
-          ? Colors.red
-          : _shotlist[(_currentlyLive + 1).clamp(0, _shotlist.length - 1)]
-                      .operatorId ==
-                  _operatorId
-              ? Colors.green
-              : Colors.transparent;
+  Color getTallyColor() {
+    if (_shotlist.isEmpty) {
+      return Colors.transparent;
+    } else if (_shotlist[_currentlyLive].operatorId == _operatorId) {
+      return Colors.red;
+    } else if (_shotlist[(_currentlyLive + 1).clamp(0, _shotlist.length - 1)]
+            .operatorId ==
+        _operatorId) {
+      return Colors.green;
+    } else {
+      return Colors.transparent;
+    }
+  }
+
+  (int, ShotlistEntry?) getNextEntry() {
+    for (int i = _currentlyLive; i < _shotlist.length; i++) {
+      if (_shotlist[i].operatorId == _operatorId) {
+        return (i - _currentlyLive, _shotlist[i]);
+      }
+    }
+    return (-1, null);
+  }
 
   Future<ConnectionResult> connect(String url, String token) async {
     _isReconnecting = false;

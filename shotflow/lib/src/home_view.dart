@@ -78,7 +78,7 @@ class _HomeViewState extends State<HomeView> {
               return Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: connection.tallyColor, // Border color
+                    color: connection.getTallyColor(), // Border color
                     width: 4, // Border width
                   ),
                 ),
