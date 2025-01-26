@@ -7,7 +7,7 @@ import 'connection_service.dart';
 import 'types.dart';
 
 class ConnectionController with ChangeNotifier {
-  ConnectionController() {
+  ConnectionController({bool skipInit = false}) {
     _connectionService = ConnectionService();
     _subscription = _connectionService.stream.listen(
       (event) {
@@ -38,6 +38,8 @@ class ConnectionController with ChangeNotifier {
         debugPrint('ConnectionService Error: $error');
       },
     );
+
+    // if (skipInit) return;
 
     _connectionService.init().then((status) {
       switch (status) {
