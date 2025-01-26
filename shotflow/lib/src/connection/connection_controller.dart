@@ -76,6 +76,14 @@ class ConnectionController with ChangeNotifier {
         case 'operator_assign':
           _operatorId = jsonData['operator_id'] as int;
           break;
+        case 'message_history':
+          final List<dynamic> data = jsonData['messages'] as List<dynamic>;
+          _chatMessages = data.map((e) => ChatMessage.fromJson(e)).toList();
+          break;
+        case 'chat_message':
+          final message = ChatMessage.fromJson(jsonData['message']);
+          _chatMessages.add(message);
+
         default:
           throw Exception('Unknown message type');
       }
@@ -102,6 +110,9 @@ class ConnectionController with ChangeNotifier {
 
   int _operatorId = 0;
   int get operatorId => _operatorId;
+
+  List<ChatMessage> _chatMessages = [];
+  List<ChatMessage> get chatMessages => _chatMessages;
 
   Color getTallyColor() {
     if (_shotlist.isEmpty) {
@@ -142,6 +153,17 @@ class ConnectionController with ChangeNotifier {
       _isReconnecting = false;
       notifyListeners();
     }
+  }
+
+  void sendChatMessage(String text) {
+    final message = ChatMessage(
+      isOperator: true,
+      text: text,
+      name: 'You',
+    );
+    chatMessages.add(message);
+    connectionService.sendMessage(
+        '{"type": "chat_message", "message": ${jsonEncode(message)}}');
   }
 
   @override

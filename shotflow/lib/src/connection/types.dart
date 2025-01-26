@@ -24,3 +24,26 @@ enum ConnectionResult {
   invalidToken,
   connectionError,
 }
+
+class ChatMessage {
+  ChatMessage(
+      {required this.isOperator, required this.text, required this.name});
+
+  final bool isOperator;
+  final String name;
+  final String text;
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    return ChatMessage(
+        isOperator: json['sender'] == "You",
+        text: json['message'],
+        name: json['sender']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sender': isOperator ? 'You' : name,
+      'message': text,
+    };
+  }
+}

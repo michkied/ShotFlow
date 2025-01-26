@@ -112,6 +112,29 @@ class WebSocketServer
         await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
             CancellationToken.None);
         
+        responseMessage = """
+                          {
+                            "type": "message_history",
+                            "messages": [
+                              {"sender": "Vision mixer", "message": "Hello, Bob!"},
+                              {"sender": "Vision mixer", "message": "Are you ready to go?"},
+                              {"sender": "You", "message": "Yes, I'm ready."},
+                              {"sender": "Vision mixer", "message": "Great, let's start with the first shot."},
+                              {"sender": "You", "message": "Copy that."},
+                              {"sender": "Vision mixer", "message": "Switch to camera 2."},
+                              {"sender": "You", "message": "Camera 2 is live."},
+                              {"sender": "Vision mixer", "message": "Prepare for the next shot."},
+                              {"sender": "You", "message": "Ready for the next shot."},
+                              {"sender": "Vision mixer", "message": "Good job, keep it up."}
+                            ]
+                          }
+                          """;
+        responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
+        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
+            CancellationToken.None);
+
+        Task.Run(() => EchoMessages(webSocket));
+        
         while (webSocket.State == WebSocketState.Open)
         {
             try
@@ -131,6 +154,56 @@ class WebSocketServer
         }
 
         webSocket.Dispose();
+    }
+    
+    private static async Task EchoMessages(WebSocket webSocket)
+    {
+        byte[] buffer = new byte[1024];
+        while (webSocket.State == WebSocketState.Open)
+        {
+            WebSocketReceiveResult result;
+            try
+            {
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                break;
+            }
+
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+                Console.WriteLine("WebSocket connection closed.");
+                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                break;
+            }
+
+            string receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            Console.WriteLine($"Received: {receivedMessage}");
+            
+            var jsonDocument = JsonDocument.Parse(receivedMessage);
+            var root = jsonDocument.RootElement;
+            string response = "";
+            if (root.GetProperty("type").GetString() == "chat_message")
+            {
+                var message = root.GetProperty("message");
+                var modifiedMessage = new
+                {
+                    type = "chat_message",
+                    message = new
+                    {
+                        sender = "Vision Mixer",
+                        message = message.GetProperty("message").GetString()
+                    }
+                };
+
+                response = JsonSerializer.Serialize(modifiedMessage);
+            }
+
+            byte[] responseBuffer = Encoding.UTF8.GetBytes(response);
+            await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
     }
 
     public static void Main(string[] args)

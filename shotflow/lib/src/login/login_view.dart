@@ -73,105 +73,120 @@ class _LoginViewState extends State<LoginView> {
           return Container();
         }
         return Scaffold(
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    Icons.videocam,
-                    size: 100.0,
-                  ),
-                  Text(
-                    'ShotFlow',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 32.0),
-                  TextField(
-                    controller: urlController,
-                    decoration: InputDecoration(
-                      labelText: 'URL',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: tokenController,
-                    decoration: InputDecoration(
-                      labelText: 'Token',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () => login(connection, context),
-                    child: Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 16.0),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Text(
-                      'or',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final result = (await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => QRViewExample())))
-                          as String?;
-                      if (result != null) {
-                        try {
-                          final scanData = jsonDecode(result);
-                          urlController.text = scanData['url'];
-                          tokenController.text = scanData['token'];
-                          if (context.mounted) {
-                            login(connection, context);
-                          }
-                        } catch (e) {
-                          debugPrint('Error parsing QR Code JSON: $e');
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    ),
-                    child: Row(
+          body: Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.qr_code,
-                              size: 30.0, color: Colors.white),
+                        Icon(
+                          Icons.videocam,
+                          size: 100.0,
                         ),
-                        Text('Scan QR Code',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16.0)),
+                        Text(
+                          'ShotFlow',
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 32.0),
+                        TextField(
+                          controller: urlController,
+                          decoration: InputDecoration(
+                            labelText: 'URL',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16.0),
+                        TextField(
+                          controller: tokenController,
+                          decoration: InputDecoration(
+                            labelText: 'Token',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 16.0),
+                        ElevatedButton(
+                          onPressed: () => login(connection, context),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: Text(
+                            'or',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final result = (await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => QRViewExample())))
+                                as String?;
+                            if (result != null) {
+                              try {
+                                final scanData = jsonDecode(result);
+                                urlController.text = scanData['url'];
+                                tokenController.text = scanData['token'];
+                                if (context.mounted) {
+                                  login(connection, context);
+                                }
+                              } catch (e) {
+                                debugPrint('Error parsing QR Code JSON: $e');
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(Icons.qr_code, size: 30.0),
+                                ),
+                                Text('Scan QR Code',
+                                    style: TextStyle(fontSize: 18.0)),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 16.0),
-                  if (connection.isReconnecting || isLoggingIn)
-                    CircularProgressIndicator()
-                ],
+                ),
               ),
-            ),
+              if (isLoggingIn || connection.isReconnecting)
+                Positioned.fill(
+                  child: Container(
+                    alignment: Alignment.center,
+                    color: Colors.black.withAlpha(200),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
           ),
         );
       },
