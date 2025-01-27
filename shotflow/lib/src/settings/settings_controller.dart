@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shotflow/src/settings/types.dart';
 
 import 'settings_service.dart';
 
@@ -22,6 +23,19 @@ class SettingsController with ChangeNotifier {
 
   Color _accentColor = Colors.blue;
   Color get accentColor => _accentColor;
+
+  SupportedLocales _localeType = SupportedLocales.def;
+  SupportedLocales get localeType => _localeType;
+  Locale? get locale {
+    switch (_localeType) {
+      case SupportedLocales.en:
+        return Locale('en');
+      case SupportedLocales.pl:
+        return Locale('pl');
+      case SupportedLocales.def:
+        return null;
+    }
+  }
 
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
@@ -53,13 +67,21 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateAccentColor(Color? newcolor) async {
     if (newcolor == null) return;
-    // Do not perform any work if new and old ThemeMode are identical
     if (newcolor == accentColor) return;
-
-    // Otherwise, store the new ThemeMode in memory
     _accentColor = newcolor;
 
-    // Important! Inform listeners a change has occurred.
     notifyListeners();
+  }
+
+  Future<void> updateLocale(SupportedLocales? newLocale) async {
+    if (newLocale == null) return;
+    if (newLocale == _localeType) return;
+    _localeType = newLocale;
+
+    notifyListeners();
+
+    // Persist the changes to a local database or the internet using the
+    // SettingService.
+    // await _settingsService.updateLocale(newLocale);
   }
 }

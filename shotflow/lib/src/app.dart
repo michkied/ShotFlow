@@ -8,9 +8,8 @@ import 'login/qr_scan_view.dart';
 import 'settings/settings_controller.dart';
 import 'login/login_view.dart';
 
-/// The Widget that configures your application.
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ShotFlowApp extends StatelessWidget {
+  const ShotFlowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +30,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         themeMode: settings.themeMode,
-
         restorationScopeId: 'app',
-
-        // Provide the generated AppLocalizations to the MaterialApp. This
-        // allows descendant Widgets to display the correct translations
-        // depending on the user's locale.
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -47,12 +41,9 @@ class MyApp extends StatelessWidget {
           Locale('en'),
           Locale('pl'),
         ],
-
-        // The appTitle is defined in .arb files found in the localization
-        // directory.
+        locale: settings.locale,
         onGenerateTitle: (BuildContext context) =>
             AppLocalizations.of(context)!.appTitle,
-
         onGenerateRoute: (RouteSettings routeSettings) {
           return MaterialPageRoute<void>(
             settings: routeSettings,

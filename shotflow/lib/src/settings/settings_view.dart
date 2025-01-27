@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../connection/connection_controller.dart';
 import 'settings_controller.dart';
+import 'types.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key, required this.controller});
@@ -19,6 +20,35 @@ class SettingsView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                AppLocalizations.of(context)!.language,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.defaultLang),
+                leading: Radio<SupportedLocales>(
+                  value: SupportedLocales.def,
+                  groupValue: controller.localeType,
+                  onChanged: controller.updateLocale,
+                ),
+              ),
+              ListTile(
+                title: Text('English'),
+                leading: Radio<SupportedLocales>(
+                  value: SupportedLocales.en,
+                  groupValue: controller.localeType,
+                  onChanged: controller.updateLocale,
+                ),
+              ),
+              ListTile(
+                title: Text('Polski'),
+                leading: Radio<SupportedLocales>(
+                  value: SupportedLocales.pl,
+                  groupValue: controller.localeType,
+                  onChanged: controller.updateLocale,
+                ),
+              ),
+              SizedBox(height: 20),
               Text(
                 AppLocalizations.of(context)!.theme,
                 style: Theme.of(context).textTheme.headlineSmall,

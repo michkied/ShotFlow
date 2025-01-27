@@ -27,6 +27,6 @@ void main() async {
       ChangeNotifierProvider(create: (context) => settingsController),
       ChangeNotifierProvider(create: (context) => connectionController),
     ],
-    child: MyApp(),
+    child: ShotFlowApp(),
   ));
 }

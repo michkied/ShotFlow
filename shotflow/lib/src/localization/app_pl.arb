@@ -18,6 +18,8 @@
   "nextShot": "Twoje następne ujęcie:",
   "approx": "za ok.",
 
+  "language": "Język",
+  "defaultLang": "Domyślny",
   "theme": "Tryb",
   "lightTheme": "Jasny",
   "darkTheme": "Ciemny",
