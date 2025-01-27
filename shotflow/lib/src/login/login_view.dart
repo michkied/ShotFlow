@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shotflow/src/login/qr_scan_view.dart';
 
 import '../connection/types.dart';
@@ -40,10 +41,11 @@ class _LoginViewState extends State<LoginView> {
         Navigator.of(context).pushReplacementNamed('/home');
         break;
       case ConnectionResult.invalidToken:
-        _showErrorMessage(context, 'Invalid token. Please try again.');
+        _showErrorMessage(context, AppLocalizations.of(context)!.invalidToken);
         break;
       case ConnectionResult.connectionError:
-        _showErrorMessage(context, 'Connection error. Please try again.');
+        _showErrorMessage(
+            context, AppLocalizations.of(context)!.connectionError);
         break;
     }
     setState(() {
@@ -87,7 +89,7 @@ class _LoginViewState extends State<LoginView> {
                           size: 100.0,
                         ),
                         Text(
-                          'ShotFlow',
+                          AppLocalizations.of(context)!.appTitle,
                           style: TextStyle(
                             fontSize: 24.0,
                             fontWeight: FontWeight.bold,
@@ -97,7 +99,7 @@ class _LoginViewState extends State<LoginView> {
                         TextField(
                           controller: urlController,
                           decoration: InputDecoration(
-                            labelText: 'URL',
+                            labelText: AppLocalizations.of(context)!.urlLabel,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
@@ -107,7 +109,7 @@ class _LoginViewState extends State<LoginView> {
                         TextField(
                           controller: tokenController,
                           decoration: InputDecoration(
-                            labelText: 'Token',
+                            labelText: AppLocalizations.of(context)!.tokenLabel,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
@@ -120,7 +122,7 @@ class _LoginViewState extends State<LoginView> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              'Login',
+                              AppLocalizations.of(context)!.login,
                               style: TextStyle(fontSize: 18.0),
                             ),
                           ),
@@ -128,7 +130,7 @@ class _LoginViewState extends State<LoginView> {
                         Padding(
                           padding: const EdgeInsets.all(28.0),
                           child: Text(
-                            'or',
+                            AppLocalizations.of(context)!.or,
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
@@ -139,7 +141,7 @@ class _LoginViewState extends State<LoginView> {
                           onPressed: () async {
                             final result = (await Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder: (context) => QRViewExample())))
+                                        builder: (context) => QRViewScreen())))
                                 as String?;
                             if (result != null) {
                               try {
@@ -150,6 +152,11 @@ class _LoginViewState extends State<LoginView> {
                                   login(connection, context);
                                 }
                               } catch (e) {
+                                if (context.mounted) {
+                                  _showErrorMessage(context,
+                                      AppLocalizations.of(context)!.invalidQR);
+                                }
+
                                 debugPrint('Error parsing QR Code JSON: $e');
                               }
                             }
@@ -167,7 +174,7 @@ class _LoginViewState extends State<LoginView> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Icon(Icons.qr_code, size: 30.0),
                                 ),
-                                Text('Scan QR Code',
+                                Text(AppLocalizations.of(context)!.scanQRButton,
                                     style: TextStyle(fontSize: 18.0)),
                               ],
                             ),

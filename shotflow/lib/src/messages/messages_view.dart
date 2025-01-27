@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/messages/message_bubble.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../connection/connection_controller.dart';
 
@@ -69,7 +70,7 @@ class _MessagesViewState extends State<MessagesView> {
                       child: TextField(
                         controller: controller,
                         decoration: InputDecoration(
-                          hintText: 'Type a message',
+                          hintText: AppLocalizations.of(context)!.messageBox,
                           border: OutlineInputBorder(
                               borderRadius: const BorderRadius.all(
                                   Radius.circular(16.0))),

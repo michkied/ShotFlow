@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'connection/connection_controller.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -41,23 +43,19 @@ class _HomeViewState extends State<HomeView> {
                 );
               }),
               selectedIcon: Icon(Icons.message),
-              label: 'Messages',
+              label: AppLocalizations.of(context)!.messagesLabel,
             ),
             NavigationDestination(
               selectedIcon: Badge(
                   isLabelVisible: false, child: Icon(Icons.videocam_rounded)),
               icon: Badge(
                   isLabelVisible: false, child: Icon(Icons.videocam_outlined)),
-              label: 'Shotlist',
+              label: AppLocalizations.of(context)!.shotlistLabel,
             ),
-            // NavigationDestination(
-            //   icon: Icon(Icons.playlist_play),
-            //   label: 'Sequences',
-            // ),
             NavigationDestination(
               selectedIcon: Icon(Icons.settings),
               icon: Icon(Icons.settings_outlined),
-              label: 'Settings',
+              label: AppLocalizations.of(context)!.settingsLabel,
             ),
           ],
         ),
@@ -107,20 +105,21 @@ class _HomeViewState extends State<HomeView> {
                 children: <Widget>[
                   DefaultTextStyle(
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    child: Text('Connection lost.'),
+                    child: Text(AppLocalizations.of(context)!.connectionLost),
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
                     },
-                    child: Text('Go to login page'),
+                    child: Text(AppLocalizations.of(context)!.goToLoginPage),
                   ),
                   SizedBox(height: 60),
                   if (connection.isReconnecting) ...[
                     DefaultTextStyle(
                       style: TextStyle(fontSize: 14),
-                      child: Text('Attempting to reconnect...'),
+                      child: Text(
+                          AppLocalizations.of(context)!.attemptingToReconnect),
                     ),
                     SizedBox(height: 10),
                     SizedBox(
@@ -132,14 +131,15 @@ class _HomeViewState extends State<HomeView> {
                       style: TextStyle(
                         fontSize: 14,
                       ),
-                      child: Text("Can't connect to the server."),
+                      child: Text(
+                          AppLocalizations.of(context)!.cantConnectToServer),
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
                         connection.reconnect();
                       },
-                      child: Text('Try again'),
+                      child: Text(AppLocalizations.of(context)!.tryAgain),
                     ),
                   ]
                 ],

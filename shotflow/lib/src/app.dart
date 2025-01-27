@@ -44,7 +44,8 @@ class MyApp extends StatelessWidget {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [
-          Locale('en', ''), // English, no country code
+          Locale('en'),
+          Locale('pl'),
         ],
 
         // The appTitle is defined in .arb files found in the localization
@@ -62,7 +63,7 @@ class MyApp extends StatelessWidget {
                 case '/login':
                   return LoginView();
                 case '/qr_scan':
-                  return QRViewExample();
+                  return QRViewScreen();
                 default:
                   return LoginView();
               }

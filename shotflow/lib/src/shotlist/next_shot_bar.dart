@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NextShotBar extends StatelessWidget {
   const NextShotBar({super.key});
@@ -18,7 +19,7 @@ class NextShotBar extends StatelessWidget {
 
         if (nextEntry.$1 == -1) {
           return Center(
-            child: Text("That's all! Good job ;)"),
+            child: Text(AppLocalizations.of(context)!.allDone),
           );
         }
 
@@ -27,7 +28,7 @@ class NextShotBar extends StatelessWidget {
             color: Colors.red,
             child: Center(
               child: Text(
-                "You're live!",
+                AppLocalizations.of(context)!.youreLive,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -38,7 +39,7 @@ class NextShotBar extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text('Your next shot:'),
+              child: Text(AppLocalizations.of(context)!.nextShot),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +52,7 @@ class NextShotBar extends StatelessWidget {
                   padding: const EdgeInsets.only(
                       top: 8.0, bottom: 8.0, left: 30, right: 10),
                   child: Text(
-                    'in aprox.',
+                    AppLocalizations.of(context)!.approx,
                     style: TextStyle(fontSize: 12),
                   ),
                 ),

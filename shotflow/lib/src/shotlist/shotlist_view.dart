@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shotflow/src/shotlist/next_shot_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'shot_card.dart';
 
 class ShotlistView extends StatefulWidget {
@@ -42,7 +43,7 @@ class _ShotlistViewState extends State<ShotlistView> {
         return Builder(builder: (context) {
           if (connection.shotlist.isEmpty) {
             return Center(
-              child: Text("shhh... you're disturbing the silence"),
+              child: Text(AppLocalizations.of(context)!.shotlistEmpty),
             );
           }
 

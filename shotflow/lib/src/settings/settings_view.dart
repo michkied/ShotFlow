@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../connection/connection_controller.dart';
 import 'settings_controller.dart';
@@ -19,11 +20,11 @@ class SettingsView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Theme',
+                AppLocalizations.of(context)!.theme,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               ListTile(
-                title: const Text('Light'),
+                title: Text(AppLocalizations.of(context)!.lightTheme),
                 leading: Radio<ThemeMode>(
                   value: ThemeMode.light,
                   groupValue: controller.themeMode,
@@ -31,7 +32,7 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               ListTile(
-                title: const Text('Dark'),
+                title: Text(AppLocalizations.of(context)!.darkTheme),
                 leading: Radio<ThemeMode>(
                   value: ThemeMode.dark,
                   groupValue: controller.themeMode,
@@ -39,7 +40,7 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               ListTile(
-                title: const Text('System'),
+                title: Text(AppLocalizations.of(context)!.systemTheme),
                 leading: Radio<ThemeMode>(
                   value: ThemeMode.system,
                   groupValue: controller.themeMode,
@@ -48,7 +49,7 @@ class SettingsView extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                'Accent Color',
+                AppLocalizations.of(context)!.accentColor,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               SizedBox(height: 20),
@@ -98,7 +99,7 @@ class SettingsView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        'Logout',
+                        AppLocalizations.of(context)!.logout,
                         style: TextStyle(fontSize: 16),
                       ),
                     ),

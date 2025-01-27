@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class QRViewExample extends StatefulWidget {
-  const QRViewExample({super.key});
+class QRViewScreen extends StatefulWidget {
+  const QRViewScreen({super.key});
 
   @override
-  State<QRViewExample> createState() => _QRViewExampleState();
+  State<QRViewScreen> createState() => _QRViewScreenState();
 }
 
-class _QRViewExampleState extends State<QRViewExample> {
+class _QRViewScreenState extends State<QRViewScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   bool scanned = false;
   QRViewController? controller;
@@ -17,7 +18,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan the auth QR code'),
+        title: Text(AppLocalizations.of(context)!.scanQRTitle),
       ),
       body: Expanded(
         child: QRView(

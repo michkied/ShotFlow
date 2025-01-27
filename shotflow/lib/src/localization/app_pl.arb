@@ -1,0 +1,39 @@
+{
+  "@@locale": "pl",
+
+  "appTitle": "ShotFlow",
+
+  "messagesLabel": "Wiadomości",
+  "shotlistLabel": "Ujęcia",
+  "settingsLabel": "Ustawienia",
+  "connectionLost": "Utracono połączenie.",
+  "goToLoginPage": "Przejdź do strony logowania",
+  "attemptingToReconnect": "Łączenie...",
+  "cantConnectToServer": "Nie udało się połączyć.",
+  "tryAgain": "Spróbuj ponownie",
+
+  "shotlistEmpty": "cichosza...",
+  "allDone": "Dobrze chłopaki robią, dobry przekaz leci",
+  "youreLive": "Jesteś na wizji!",
+  "nextShot": "Twoje następne ujęcie:",
+  "approx": "za ok.",
+
+  "theme": "Tryb",
+  "lightTheme": "Jasny",
+  "darkTheme": "Ciemny",
+  "systemTheme": "Systemowy",
+  "accentColor": "Kolorystyka",
+  "logout": "Wyloguj",
+
+  "messageBox": "Napisz coś ciepłego",
+
+  "scanQRTitle": "Zeskanuj autoryzacyjny kod QR",
+  "login": "Zaloguj",
+  "or": "lub",
+  "scanQRButton": "Zeskanuj kod QR",
+  "invalidToken": "Niepoprawny token. Spróbuj ponownie.",
+  "connectionError": "Połączenie nieudane. Spróbuj ponownie.",
+  "urlLabel": "URL",
+  "tokenLabel": "Token",
+  "invalidQR": "Niepoprawny kod QR. Spróbuj ponownie."
+}

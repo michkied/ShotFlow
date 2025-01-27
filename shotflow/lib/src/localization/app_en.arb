@@ -1,6 +1,39 @@
 {
-  "appTitle": "shotflow",
-  "@appTitle": {
-    "description": "The title of the application"
-  }
+  "@@locale": "en",
+
+  "appTitle": "ShotFlow",
+
+  "messagesLabel": "Messages",
+  "shotlistLabel": "Shotlist",
+  "settingsLabel": "Settings",
+  "connectionLost": "Connection lost.",
+  "goToLoginPage": "Go to login page",
+  "attemptingToReconnect": "Attempting to reconnect...",
+  "cantConnectToServer": "Can't connect to the server.",
+  "tryAgain": "Try again",
+
+  "shotlistEmpty": "shhh... you're disturbing the silence",
+  "allDone": "That's all! Good job ;)",
+  "youreLive": "You're live!",
+  "nextShot": "Your next shot:",
+  "approx": "in approx.",
+
+  "theme": "Theme",
+  "lightTheme": "Light",
+  "darkTheme": "Dark",
+  "systemTheme": "System",
+  "accentColor": "Accent Color",
+  "logout": "Logout",
+
+  "messageBox": "Type a message",
+
+  "scanQRTitle": "Scan the auth QR code",
+  "login": "Login",
+  "or": "or",
+  "scanQRButton": "Scan QR Code",
+  "invalidToken": "Invalid token. Please try again.",
+  "connectionError": "Connection error. Please try again.",
+  "urlLabel": "URL",
+  "tokenLabel": "Token",
+  "invalidQR": "Invalid QR Code. Please try again."
 }
