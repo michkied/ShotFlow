@@ -3,9 +3,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'home_view.dart';
+import 'home/home_view.dart';
 import 'login/qr_scan_view.dart';
-import 'settings/settings_controller.dart';
+import 'home/settings/settings_controller.dart';
 import 'login/login_view.dart';
 
 class ShotFlowApp extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../connection/connection_controller.dart';
+import '../../connection/connection_controller.dart';
 import 'settings_controller.dart';
 import 'types.dart';
 
@@ -20,6 +20,7 @@ class SettingsView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Language
               Text(
                 AppLocalizations.of(context)!.language,
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -49,6 +50,8 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
+
+              // Theme
               Text(
                 AppLocalizations.of(context)!.theme,
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -78,6 +81,8 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
+
+              // Accent color
               Text(
                 AppLocalizations.of(context)!.accentColor,
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -114,6 +119,8 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 50),
+
+              // Logout
               Consumer<ConnectionController>(
                   builder: (context, connection, child) {
                 return Center(

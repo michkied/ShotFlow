@@ -4,8 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'src/app.dart';
 import 'src/connection/connection_service.dart';
-import 'src/settings/settings_controller.dart';
-import 'src/settings/settings_service.dart';
+import 'src/home/settings/settings_controller.dart';
+import 'src/home/settings/settings_service.dart';
 import 'src/connection/connection_controller.dart';
 
 void main() async {
@@ -18,9 +18,6 @@ void main() async {
   final connectionService = ConnectionService(storage);
   final connectionController =
       ConnectionController(connectionService: connectionService);
-
-  // SystemTheme.fallbackColor = Colors.blue;
-  // await SystemTheme.accentColor.load();
 
   runApp(MultiProvider(
     providers: [

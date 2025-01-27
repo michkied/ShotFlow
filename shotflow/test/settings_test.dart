@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shotflow/src/settings/settings_controller.dart';
-import 'package:shotflow/src/settings/settings_service.dart';
-import 'package:shotflow/src/settings/types.dart';
+import 'package:shotflow/src/home/settings/settings_controller.dart';
+import 'package:shotflow/src/home/settings/settings_service.dart';
+import 'package:shotflow/src/home/settings/types.dart';
 import 'settings_test.mocks.dart';
 
 @GenerateMocks([SettingsService])

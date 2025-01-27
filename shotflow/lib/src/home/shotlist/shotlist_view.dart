@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:shotflow/src/shotlist/next_shot_bar.dart';
+import 'package:shotflow/src/home/shotlist/next_shot_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'shot_card.dart';
 

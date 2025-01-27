@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shotflow/src/settings/types.dart';
+import 'package:shotflow/src/home/settings/types.dart';
 
 import 'settings_service.dart';
 
