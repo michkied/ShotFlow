@@ -44,24 +44,25 @@ class ShotCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(left: 16.0),
                 child: SizedBox(
-                    width: 40,
+                    width: 20,
                     child: Text(entry.id.toString(),
                         style: const TextStyle(fontSize: 16))),
               ),
               Padding(
-                  padding: EdgeInsets.only(
-                      left: 16.0,
-                      top: isLive ? 20.0 : 10.0,
-                      bottom: isLive ? 20.0 : 10.0),
+                  padding: EdgeInsets.only(left: 16.0),
                   child: SizedBox(
-                      width: 70,
+                      width: 60,
                       child: Text('${entry.duration} s',
-                          style: const TextStyle(fontSize: 30)))),
+                          style: const TextStyle(fontSize: 25)))),
               Expanded(
-                child: Text(entry.title, style: const TextStyle(fontSize: 30)),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: isLive ? 20.0 : 10.0),
+                  child:
+                      Text(entry.title, style: const TextStyle(fontSize: 25)),
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 16.0),
+                padding: const EdgeInsets.only(right: 16.0, left: 8.0),
                 child: Text(entry.operatorName),
               ),
             ],

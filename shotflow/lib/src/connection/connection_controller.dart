@@ -169,6 +169,12 @@ class ConnectionController with ChangeNotifier {
         '{"type": "chat_message", "message": ${jsonEncode(message)}}');
   }
 
+  void disconnect() {
+    _isReconnecting = false;
+    connectionService.disconnect();
+    connectionService.clearCredentials();
+  }
+
   @override
   void dispose() {
     _subscription.cancel();

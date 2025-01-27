@@ -50,10 +50,11 @@ class ConnectionService {
       disconnect();
     }
     _isVerified = false;
-    _channel = WebSocketChannel.connect(
-      Uri.parse(url),
-    );
+
     try {
+      _channel = WebSocketChannel.connect(
+        Uri.parse(url),
+      );
       await _channel.ready.timeout(Duration(seconds: 5));
     } catch (e) {
       debugPrint('Error connecting: $e');
@@ -106,9 +107,16 @@ class ConnectionService {
   void sendMessage(String message) => _channel.sink.add(message);
 
   void disconnect() {
+    _isConnected = false;
     _subscription.cancel();
     _channel.sink.close();
-    _statusStreamSubject.add('disconnected'); // Notify listeners
+  }
+
+  void clearCredentials() async {
+    await _storage.delete(key: 'url');
+    await _storage.delete(key: 'token');
+    url = '';
+    token = '';
   }
 
   void reconnect() {
