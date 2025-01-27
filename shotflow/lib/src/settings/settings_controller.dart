@@ -9,7 +9,7 @@ class SettingsController with ChangeNotifier {
 
   final SettingsService _settingsService;
 
-  late ThemeMode _themeMode;
+  late ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
 
   Color _accentColor = Colors.blue;

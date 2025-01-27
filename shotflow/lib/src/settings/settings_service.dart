@@ -24,7 +24,7 @@ class SettingsService {
         prefs.getInt(_accentColorKeyGreen) ?? (Colors.blue.g * 255).toInt();
     final colorValueBlue =
         prefs.getInt(_accentColorKeyBlue) ?? (Colors.blue.b * 255).toInt();
-    return Color.fromRGBO(colorValueRed, colorValueGreen, colorValueBlue, 100);
+    return Color.fromRGBO(colorValueRed, colorValueGreen, colorValueBlue, 1);
   }
 
   Future<SupportedLocales> localeType() async {
@@ -34,19 +34,22 @@ class SettingsService {
     return SupportedLocales.values[localeIndex];
   }
 
-  Future<void> updateThemeMode(ThemeMode theme) async {
+  Future<void> updateThemeMode(ThemeMode? theme) async {
+    if (theme == null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_themeModeKey, theme.index);
   }
 
-  Future<void> updateAccentColor(Color color) async {
+  Future<void> updateAccentColor(Color? color) async {
+    if (color == null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_accentColorKeyRed, (color.r * 255).toInt());
     await prefs.setInt(_accentColorKeyGreen, (color.g * 255).toInt());
     await prefs.setInt(_accentColorKeyBlue, (color.b * 255).toInt());
   }
 
-  Future<void> updateLocaleType(SupportedLocales locale) async {
+  Future<void> updateLocaleType(SupportedLocales? locale) async {
+    if (locale == null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_localeTypeKey, locale.index);
   }

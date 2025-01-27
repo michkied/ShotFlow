@@ -18,7 +18,7 @@ class ConnectionService {
     return await connect();
   }
 
-  FlutterSecureStorage _storage;
+  final FlutterSecureStorage _storage;
 
   String url = '';
   String token = '';
@@ -38,7 +38,10 @@ class ConnectionService {
 
   bool _isVerified = false;
 
-  Future<void> setCredentials(String url, String token) async {
+  Future<void> setCredentials(String? url, String? token) async {
+    if (url == null || token == null) {
+      return;
+    }
     this.url = url;
     this.token = token;
     await _storage.write(key: 'url', value: url);
@@ -83,7 +86,7 @@ class ConnectionService {
         debugPrint('Connection Error: $error');
         _isConnected = false;
         _subscription.cancel();
-        _statusStreamSubject.add('disconnected'); // Notify listeners
+        _statusStreamSubject.add('disconnected');
         if (!completer.isCompleted) {
           completer.complete(ConnectionResult.connectionError);
         }
@@ -92,7 +95,7 @@ class ConnectionService {
         debugPrint('Connection closed');
         _isConnected = false;
         _subscription.cancel();
-        _statusStreamSubject.add('disconnected'); // Notify listeners
+        _statusStreamSubject.add('disconnected');
         if (!completer.isCompleted) {
           completer.complete(ConnectionResult.connectionError);
         }
@@ -104,7 +107,8 @@ class ConnectionService {
     return completer.future;
   }
 
-  void sendMessage(String message) => _channel.sink.add(message);
+  void sendMessage(String? message) =>
+      message != null ? _channel.sink.add(message) : {};
 
   void disconnect() {
     _isConnected = false;
@@ -112,7 +116,7 @@ class ConnectionService {
     _channel.sink.close();
   }
 
-  void clearCredentials() async {
+  Future<void> clearCredentials() async {
     await _storage.delete(key: 'url');
     await _storage.delete(key: 'token');
     url = '';

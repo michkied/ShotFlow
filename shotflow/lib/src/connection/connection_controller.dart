@@ -142,7 +142,10 @@ class ConnectionController with ChangeNotifier {
     return (-1, null);
   }
 
-  Future<ConnectionResult> connect(String url, String token) async {
+  Future<ConnectionResult> connect(String? url, String? token) async {
+    if (url == null || token == null) {
+      return ConnectionResult.invalidToken;
+    }
     _isReconnecting = false;
     await connectionService.setCredentials(url, token);
     return connectionService.connect();
