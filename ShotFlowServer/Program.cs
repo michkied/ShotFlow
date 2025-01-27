@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 class WebSocketServer
 {
-    public static async Task Start(string uriPrefix)
+    private static async Task Start(string uriPrefix)
     {
         HttpListener listener = new HttpListener();
         listener.Prefixes.Add(uriPrefix);
@@ -18,20 +18,25 @@ class WebSocketServer
         while (true)
         {
             HttpListenerContext context = await listener.GetContextAsync();
-
-            // Check if it is a WebSocket request
+            
             if (context.Request.IsWebSocketRequest)
             {
                 ProcessWebSocketConnection(context);
             }
             else
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400;
                 context.Response.Close();
             }
         }
     }
 
+    private static async Task SendMessage(String message, WebSocket webSocket)
+    {
+        byte[] buffer = Encoding.UTF8.GetBytes(message);
+        await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+    }
+    
     private static async void ProcessWebSocketConnection(HttpListenerContext context)
     {
         WebSocket webSocket = (await context.AcceptWebSocketAsync(null)).WebSocket;
@@ -74,10 +79,7 @@ class WebSocketServer
         }
         
         Thread.Sleep(1000);
-        responseMessage = "ok";
-        responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
-        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
-            CancellationToken.None);
+        await SendMessage("ok", webSocket);
 
         Console.WriteLine("Token verified. Connection established.");
         
@@ -103,16 +105,9 @@ class WebSocketServer
             data
         };
         responseMessage = JsonSerializer.Serialize(shotlistUpdate);
-        responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
-        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
-            CancellationToken.None);
-        
-        responseMessage = """{"type": "operator_assign", "operator_id": 2}""";
-        responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
-        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
-            CancellationToken.None);
-        
-        responseMessage = """
+        await SendMessage(responseMessage, webSocket);
+        await SendMessage("""{"type": "operator_assign", "operator_id": 2}""", webSocket);
+        await SendMessage("""
                           {
                             "type": "message_history",
                             "messages": [
@@ -128,10 +123,7 @@ class WebSocketServer
                               {"sender": "Vision mixer", "message": "Good job, keep it up."}
                             ]
                           }
-                          """;
-        responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
-        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
-            CancellationToken.None);
+                          """, webSocket);
 
         Task.Run(() => EchoMessages(webSocket));
         
@@ -140,8 +132,7 @@ class WebSocketServer
             try
             {
                 responseMessage = $"{{\"type\": \"shotlist_jump\", \"currently_live\": {i % data.Length}}}";
-                responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
-                await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                await SendMessage(responseMessage, webSocket);
                 i++;
                 Console.WriteLine(responseMessage);
                 Thread.Sleep(3000);
