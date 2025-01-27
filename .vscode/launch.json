@@ -19,6 +19,14 @@
             "deviceId": "chrome",
             "request": "launch",
             "type": "dart"
+        },
+        {
+            "name": "shotflow (Flutter Windows)",
+            "program": "lib/main.dart",
+            "cwd": "shotflow",
+            "deviceId": "windows",
+            "request": "launch",
+            "type": "dart"
         }
     ]
 }

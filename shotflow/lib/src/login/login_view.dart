@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -6,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shotflow/src/login/qr_scan_view.dart';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../connection/types.dart';
 
@@ -127,59 +130,65 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Text(
-                            AppLocalizations.of(context)!.or,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                        if (Platform.isAndroid || Platform.isIOS || kIsWeb)
+                          Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Text(
+                              AppLocalizations.of(context)!.or,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final result = (await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => QRViewScreen())))
-                                as String?;
-                            if (result != null) {
-                              try {
-                                final scanData = jsonDecode(result);
-                                urlController.text = scanData['url'];
-                                tokenController.text = scanData['token'];
-                                if (context.mounted) {
-                                  login(connection, context);
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  _showErrorMessage(context,
-                                      AppLocalizations.of(context)!.invalidQR);
-                                }
+                        if (Platform.isAndroid || Platform.isIOS || kIsWeb)
+                          ElevatedButton(
+                            onPressed: () async {
+                              final result = (await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          QRViewScreen()))) as String?;
+                              if (result != null) {
+                                try {
+                                  final scanData = jsonDecode(result);
+                                  urlController.text = scanData['url'];
+                                  tokenController.text = scanData['token'];
+                                  if (context.mounted) {
+                                    login(connection, context);
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    _showErrorMessage(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .invalidQR);
+                                  }
 
-                                debugPrint('Error parsing QR Code JSON: $e');
+                                  debugPrint('Error parsing QR Code JSON: $e');
+                                }
                               }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(Icons.qr_code, size: 30.0),
-                                ),
-                                Text(AppLocalizations.of(context)!.scanQRButton,
-                                    style: TextStyle(fontSize: 18.0)),
-                              ],
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.qr_code, size: 30.0),
+                                  ),
+                                  Text(
+                                      AppLocalizations.of(context)!
+                                          .scanQRButton,
+                                      style: TextStyle(fontSize: 18.0)),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
