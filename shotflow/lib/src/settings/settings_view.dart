@@ -25,14 +25,6 @@ class SettingsView extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               ListTile(
-                title: Text(AppLocalizations.of(context)!.defaultLang),
-                leading: Radio<SupportedLocales>(
-                  value: SupportedLocales.def,
-                  groupValue: controller.localeType,
-                  onChanged: controller.updateLocale,
-                ),
-              ),
-              ListTile(
                 title: Text('English'),
                 leading: Radio<SupportedLocales>(
                   value: SupportedLocales.en,
@@ -44,6 +36,14 @@ class SettingsView extends StatelessWidget {
                 title: Text('Polski'),
                 leading: Radio<SupportedLocales>(
                   value: SupportedLocales.pl,
+                  groupValue: controller.localeType,
+                  onChanged: controller.updateLocale,
+                ),
+              ),
+              ListTile(
+                title: Text('System'),
+                leading: Radio<SupportedLocales>(
+                  value: SupportedLocales.def,
                   groupValue: controller.localeType,
                   onChanged: controller.updateLocale,
                 ),
