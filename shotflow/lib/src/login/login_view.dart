@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -8,7 +7,7 @@ import 'package:shotflow/src/connection/connection_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shotflow/src/login/qr_scan_view.dart';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 
 import '../connection/types.dart';
 
@@ -130,7 +129,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-                        if (Platform.isAndroid || Platform.isIOS || kIsWeb)
+                        if (defaultTargetPlatform == TargetPlatform.iOS ||
+                            defaultTargetPlatform == TargetPlatform.android ||
+                            kIsWeb)
                           Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Text(
@@ -141,7 +142,9 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ),
                           ),
-                        if (Platform.isAndroid || Platform.isIOS || kIsWeb)
+                        if (defaultTargetPlatform == TargetPlatform.iOS ||
+                            defaultTargetPlatform == TargetPlatform.android ||
+                            kIsWeb)
                           ElevatedButton(
                             onPressed: () async {
                               final result = (await Navigator.of(context).push(

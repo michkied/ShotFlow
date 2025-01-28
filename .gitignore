@@ -11,3 +11,8 @@
 **/obj
 *.user
 *.mocks.*
+
+docs/*
+!docs/*.png
+!docs/ShotFlow.tex
+!docs/ShotFlow.pdf

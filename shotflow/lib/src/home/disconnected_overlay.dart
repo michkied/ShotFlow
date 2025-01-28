@@ -20,7 +20,10 @@ class DisconnectedOverlay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               DefaultTextStyle(
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
                 child: Text(AppLocalizations.of(context)!.connectionLost),
               ),
               SizedBox(height: 10),
@@ -46,6 +49,7 @@ class DisconnectedOverlay extends StatelessWidget {
                 DefaultTextStyle(
                   style: TextStyle(
                     fontSize: 14,
+                    color: Colors.white,
                   ),
                   child:
                       Text(AppLocalizations.of(context)!.cantConnectToServer),

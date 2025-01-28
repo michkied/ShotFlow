@@ -106,7 +106,7 @@ class WebSocketServer
         };
         responseMessage = JsonSerializer.Serialize(shotlistUpdate);
         await SendMessage(responseMessage, webSocket);
-        await SendMessage("""{"type": "operator_assign", "operator_id": 2}""", webSocket);
+        await SendMessage("""{"type": "operator_assign", "operator_id": 5}""", webSocket);
         await SendMessage("""
                           {
                             "type": "message_history",

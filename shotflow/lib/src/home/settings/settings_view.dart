@@ -42,7 +42,7 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               ListTile(
-                title: Text('System'),
+                title: Text(AppLocalizations.of(context)!.systemTheme),
                 leading: Radio<SupportedLocales>(
                   value: SupportedLocales.def,
                   groupValue: controller.localeType,
