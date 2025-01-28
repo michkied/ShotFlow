@@ -1,8 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'types.dart';
 
@@ -15,7 +16,7 @@ class ConnectionService {
     if (url.isEmpty || token.isEmpty) {
       return ConnectionResult.invalidToken;
     }
-    return await connect();
+    return connect();
   }
 
   final FlutterSecureStorage _storage;
@@ -27,7 +28,7 @@ class ConnectionService {
   bool _isConnected = false;
 
   late WebSocketChannel _channel;
-  late StreamSubscription _subscription;
+  late StreamSubscription<dynamic> _subscription;
   bool _initialized = false;
 
   final _outStreamSubject = BehaviorSubject<dynamic>();
@@ -58,7 +59,7 @@ class ConnectionService {
       _channel = WebSocketChannel.connect(
         Uri.parse(url),
       );
-      await _channel.ready.timeout(Duration(seconds: 5));
+      await _channel.ready.timeout(const Duration(seconds: 5));
     } catch (e) {
       debugPrint('Error connecting: $e');
       return ConnectionResult.connectionError;
@@ -82,7 +83,7 @@ class ConnectionService {
         }
         _outStreamSubject.add(event);
       },
-      onError: (error) {
+      onError: (dynamic error) {
         debugPrint('Connection Error: $error');
         _isConnected = false;
         _subscription.cancel();

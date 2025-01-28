@@ -35,13 +35,17 @@ class SettingsService {
   }
 
   Future<void> updateThemeMode(ThemeMode? theme) async {
-    if (theme == null) return;
+    if (theme == null) {
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_themeModeKey, theme.index);
   }
 
   Future<void> updateAccentColor(Color? color) async {
-    if (color == null) return;
+    if (color == null) {
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_accentColorKeyRed, (color.r * 255).toInt());
     await prefs.setInt(_accentColorKeyGreen, (color.g * 255).toInt());
@@ -49,7 +53,9 @@ class SettingsService {
   }
 
   Future<void> updateLocaleType(SupportedLocales? locale) async {
-    if (locale == null) return;
+    if (locale == null) {
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_localeTypeKey, locale.index);
   }

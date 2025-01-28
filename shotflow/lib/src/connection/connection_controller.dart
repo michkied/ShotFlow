@@ -1,13 +1,16 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 
 import 'connection_service.dart';
 import 'types.dart';
 
 class ConnectionController with ChangeNotifier {
-  ConnectionController(
-      {required this.connectionService, bool autoConnect = true}) {
+  ConnectionController({
+    required this.connectionService,
+    bool autoConnect = true,
+  }) {
     _subscription = connectionService.stream.listen(
       (event) {
         debugPrint(event.toString());
@@ -20,7 +23,7 @@ class ConnectionController with ChangeNotifier {
       onDone: () {
         debugPrint('Service stream closed');
       },
-      onError: (error) {
+      onError: (dynamic error) {
         debugPrint('ConnectionService Error: $error');
       },
     );
@@ -33,7 +36,7 @@ class ConnectionController with ChangeNotifier {
       onDone: () {
         debugPrint('Service status stream closed');
       },
-      onError: (error) {
+      onError: (dynamic error) {
         debugPrint('ConnectionService Error: $error');
       },
     );
@@ -47,41 +50,39 @@ class ConnectionController with ChangeNotifier {
         case ConnectionResult.success:
           debugPrint('Connected');
           notifyListeners();
-          break;
         case ConnectionResult.invalidToken:
           debugPrint('Invalid token');
           _isReconnecting = false;
           notifyListeners();
-          break;
         case ConnectionResult.connectionError:
           debugPrint('Connection error');
           _isReconnecting = false;
           notifyListeners();
-          break;
       }
     });
   }
 
   void _parseMessage(String message) {
     try {
-      final Map<String, dynamic> jsonData = jsonDecode(message);
+      final jsonData = jsonDecode(message) as Map<String, dynamic>;
       switch (jsonData['type'] as String) {
         case 'shotlist_jump':
           _currentlyLive = jsonData['currently_live'] as int;
-          break;
         case 'shotlist_update':
-          final List<dynamic> data = jsonData['data'] as List<dynamic>;
-          _shotlist = data.map((e) => ShotlistEntry.fromJson(e)).toList();
-          break;
+          final data = jsonData['data'] as List<dynamic>;
+          _shotlist = data
+              .map((e) => ShotlistEntry.fromJson(e as Map<String, dynamic>))
+              .toList();
         case 'operator_assign':
           _operatorId = jsonData['operator_id'] as int;
-          break;
         case 'message_history':
-          final List<dynamic> data = jsonData['messages'] as List<dynamic>;
-          _chatMessages = data.map((e) => ChatMessage.fromJson(e)).toList();
-          break;
+          final data = jsonData['messages'] as List<dynamic>;
+          _chatMessages = data
+              .map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
+              .toList();
         case 'chat_message':
-          final message = ChatMessage.fromJson(jsonData['message']);
+          final message =
+              ChatMessage.fromJson(jsonData['message'] as Map<String, dynamic>);
           _chatMessages.add(message);
           unreadMessages++;
 
@@ -95,8 +96,8 @@ class ConnectionController with ChangeNotifier {
   }
 
   late final ConnectionService connectionService;
-  late StreamSubscription _subscription;
-  late StreamSubscription _status;
+  late StreamSubscription<dynamic> _subscription;
+  late StreamSubscription<dynamic> _status;
 
   bool get isConnected => connectionService.isConnected;
 
@@ -132,8 +133,8 @@ class ConnectionController with ChangeNotifier {
   }
 
   (int, ShotlistEntry?) getNextEntry() {
-    int timeUntil = 0;
-    for (int i = _currentlyLive; i < _shotlist.length; i++) {
+    var timeUntil = 0;
+    for (var i = _currentlyLive; i < _shotlist.length; i++) {
       if (_shotlist[i].operatorId == _operatorId) {
         return (timeUntil, _shotlist[i]);
       }
@@ -169,13 +170,15 @@ class ConnectionController with ChangeNotifier {
     );
     chatMessages.add(message);
     connectionService.sendMessage(
-        '{"type": "chat_message", "message": ${jsonEncode(message)}}');
+      '{"type": "chat_message", "message": ${jsonEncode(message)}}',
+    );
   }
 
   void disconnect() {
     _isReconnecting = false;
-    connectionService.disconnect();
-    connectionService.clearCredentials();
+    connectionService
+      ..disconnect()
+      ..clearCredentials();
   }
 
   @override

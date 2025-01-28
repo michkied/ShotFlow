@@ -20,9 +20,9 @@ class SettingsController with ChangeNotifier {
   Locale? get locale {
     switch (_localeType) {
       case SupportedLocales.en:
-        return Locale('en');
+        return const Locale('en');
       case SupportedLocales.pl:
-        return Locale('pl');
+        return const Locale('pl');
       case SupportedLocales.def:
         return null;
     }
@@ -37,8 +37,12 @@ class SettingsController with ChangeNotifier {
   }
 
   Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
-    if (newThemeMode == null) return;
-    if (newThemeMode == _themeMode) return;
+    if (newThemeMode == null) {
+      return;
+    }
+    if (newThemeMode == _themeMode) {
+      return;
+    }
     _themeMode = newThemeMode;
 
     notifyListeners();
@@ -46,8 +50,12 @@ class SettingsController with ChangeNotifier {
   }
 
   Future<void> updateAccentColor(Color? newcolor) async {
-    if (newcolor == null) return;
-    if (newcolor == accentColor) return;
+    if (newcolor == null) {
+      return;
+    }
+    if (newcolor == accentColor) {
+      return;
+    }
     _accentColor = newcolor;
 
     notifyListeners();
@@ -55,8 +63,12 @@ class SettingsController with ChangeNotifier {
   }
 
   Future<void> updateLocale(SupportedLocales? newLocale) async {
-    if (newLocale == null) return;
-    if (newLocale == _localeType) return;
+    if (newLocale == null) {
+      return;
+    }
+    if (newLocale == _localeType) {
+      return;
+    }
     _localeType = newLocale;
 
     notifyListeners();

@@ -1,13 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shotflow/src/login/qr_scan_view.dart';
-
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 
 import '../connection/types.dart';
 
@@ -26,29 +25,30 @@ class _LoginViewState extends State<LoginView> {
   bool isLoggingIn = false;
 
   Future<void> login(
-      ConnectionController connection, BuildContext context) async {
+    ConnectionController connection,
+    BuildContext context,
+  ) async {
     setState(() {
       isLoggingIn = true;
     });
     final url = urlController.text;
     final token = tokenController.text;
 
-    ConnectionResult status = await connection.connect(url, token);
+    final status = await connection.connect(url, token);
     if (!context.mounted) {
       return;
     }
 
     switch (status) {
       case ConnectionResult.success:
-        Navigator.of(context).pushReplacementNamed('/home');
-        break;
+        await Navigator.of(context).pushReplacementNamed('/home');
       case ConnectionResult.invalidToken:
         _showErrorMessage(context, AppLocalizations.of(context)!.invalidToken);
-        break;
       case ConnectionResult.connectionError:
         _showErrorMessage(
-            context, AppLocalizations.of(context)!.connectionError);
-        break;
+          context,
+          AppLocalizations.of(context)!.connectionError,
+        );
     }
     setState(() {
       isLoggingIn = false;
@@ -59,7 +59,8 @@ class _LoginViewState extends State<LoginView> {
     final snackBar = SnackBar(
       content: Text(
         message,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       backgroundColor: Colors.black,
     );
@@ -81,51 +82,51 @@ class _LoginViewState extends State<LoginView> {
             children: [
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.videocam,
-                          size: 100.0,
+                          size: 100,
                         ),
                         Text(
                           AppLocalizations.of(context)!.appTitle,
-                          style: TextStyle(
-                            fontSize: 24.0,
+                          style: const TextStyle(
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32),
                         TextField(
                           controller: urlController,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.urlLabel,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16),
                         TextField(
                           controller: tokenController,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.tokenLabel,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           obscureText: true,
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () => login(connection, context),
                           child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16),
                             child: Text(
                               AppLocalizations.of(context)!.login,
-                              style: TextStyle(fontSize: 18.0),
+                              style: const TextStyle(fontSize: 18),
                             ),
                           ),
                         ),
@@ -133,11 +134,11 @@ class _LoginViewState extends State<LoginView> {
                             defaultTargetPlatform == TargetPlatform.android ||
                             kIsWeb)
                           Padding(
-                            padding: const EdgeInsets.all(28.0),
+                            padding: const EdgeInsets.all(28),
                             child: Text(
                               AppLocalizations.of(context)!.or,
-                              style: TextStyle(
-                                fontSize: 16.0,
+                              style: const TextStyle(
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -147,24 +148,28 @@ class _LoginViewState extends State<LoginView> {
                             kIsWeb)
                           ElevatedButton(
                             onPressed: () async {
-                              final result = (await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          QRViewScreen()))) as String?;
+                              final result = await Navigator.of(context).push(
+                                MaterialPageRoute<String?>(
+                                  builder: (context) => const QRViewScreen(),
+                                ),
+                              );
                               if (result != null) {
                                 try {
-                                  final scanData = jsonDecode(result);
-                                  urlController.text = scanData['url'];
-                                  tokenController.text = scanData['token'];
+                                  final scanData = jsonDecode(result)
+                                      as Map<String, dynamic>;
+                                  urlController.text =
+                                      scanData['url'].toString();
+                                  tokenController.text =
+                                      scanData['token'].toString();
                                   if (context.mounted) {
-                                    login(connection, context);
+                                    await login(connection, context);
                                   }
                                 } catch (e) {
                                   if (context.mounted) {
                                     _showErrorMessage(
-                                        context,
-                                        AppLocalizations.of(context)!
-                                            .invalidQR);
+                                      context,
+                                      AppLocalizations.of(context)!.invalidQR,
+                                    );
                                   }
 
                                   debugPrint('Error parsing QR Code JSON: $e');
@@ -172,22 +177,24 @@ class _LoginViewState extends State<LoginView> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(12.0),
+                              padding: const EdgeInsets.all(12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(Icons.qr_code, size: 30.0),
+                                  const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(Icons.qr_code, size: 30),
                                   ),
                                   Text(
-                                      AppLocalizations.of(context)!
-                                          .scanQRButton,
-                                      style: TextStyle(fontSize: 18.0)),
+                                    AppLocalizations.of(context)!.scanQRButton,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
                                 ],
                               ),
                             ),
@@ -202,7 +209,7 @@ class _LoginViewState extends State<LoginView> {
                   child: Container(
                     alignment: Alignment.center,
                     color: Colors.black.withAlpha(200),
-                    child: CircularProgressIndicator(),
+                    child: const CircularProgressIndicator(),
                   ),
                 ),
             ],

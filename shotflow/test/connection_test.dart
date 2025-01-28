@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
@@ -12,8 +12,8 @@ import 'connection_test.mocks.dart';
 @GenerateMocks([ConnectionService])
 void main() {
   group('ConnectionService', () {
-    MockFlutterSecureStorage mockStorage = MockFlutterSecureStorage();
-    ConnectionService connectionService = ConnectionService(mockStorage);
+    final mockStorage = MockFlutterSecureStorage();
+    final connectionService = ConnectionService(mockStorage);
 
     test('init returns invalidToken when url or token is empty', () async {
       when(mockStorage.read(key: 'url')).thenAnswer((_) async => '');
@@ -41,8 +41,9 @@ void main() {
     });
 
     test('connect returns connectionError on failure', () async {
-      connectionService.url = 'ws://test';
-      connectionService.token = 'token';
+      connectionService
+        ..url = 'ws://test'
+        ..token = 'token';
 
       final result = await connectionService.connect();
 
@@ -62,8 +63,9 @@ void main() {
 
   setUp(() {
     mockConnectionService = MockConnectionService();
-    when(mockConnectionService.stream).thenAnswer((_) => Stream.empty());
-    when(mockConnectionService.statusStream).thenAnswer((_) => Stream.empty());
+    when(mockConnectionService.stream).thenAnswer((_) => const Stream.empty());
+    when(mockConnectionService.statusStream)
+        .thenAnswer((_) => const Stream.empty());
     when(mockConnectionService.init())
         .thenAnswer((_) async => ConnectionResult.success);
     connectionController =

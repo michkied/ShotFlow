@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shotflow/src/connection/types.dart';
 import 'package:shotflow/src/home/messages/message_bubble.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../connection/connection_controller.dart';
 
@@ -18,7 +18,10 @@ class _MessagesViewState extends State<MessagesView> {
   final TextEditingController controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
-  void _sendMessage(ConnectionController connection, String text) async {
+  Future<void> _sendMessage(
+    ConnectionController connection,
+    String text,
+  ) async {
     if (text.isNotEmpty) {
       setState(() {
         connection.sendChatMessage(text);
@@ -62,17 +65,17 @@ class _MessagesViewState extends State<MessagesView> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
             ),
-            child: Icon(Icons.thumb_up, color: Colors.white, size: 24),
+            child: const Icon(Icons.thumb_up, color: Colors.white, size: 24),
           ),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
           child: ElevatedButton(
             onPressed: () => _sendMessage(connection, '👎'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: Icon(Icons.thumb_down, color: Colors.white, size: 24),
+            child: const Icon(Icons.thumb_down, color: Colors.white, size: 24),
           ),
         ),
       ],
@@ -87,13 +90,14 @@ class _MessagesViewState extends State<MessagesView> {
             controller: controller,
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.messageBox,
-              border: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(16.0))),
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
             ),
           ),
         ),
         IconButton(
-          icon: Icon(Icons.send),
+          icon: const Icon(Icons.send),
           onPressed: () => _sendMessage(connection, controller.text),
         ),
       ],
@@ -106,24 +110,25 @@ class _MessagesViewState extends State<MessagesView> {
       _scrollToBottom();
     });
     return Consumer<ConnectionController>(
-        builder: (context, connection, child) {
-      final messages = connection.chatMessages;
-      connection.unreadMessages = 0;
-      return Column(
-        children: <Widget>[
-          getListOfMessages(messages),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                getMessageBox(connection),
-                SizedBox(height: 8),
-                getQuickResponseMenu(connection),
-              ],
+      builder: (context, connection, child) {
+        final messages = connection.chatMessages;
+        connection.unreadMessages = 0;
+        return Column(
+          children: <Widget>[
+            getListOfMessages(messages),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  getMessageBox(connection),
+                  const SizedBox(height: 8),
+                  getQuickResponseMenu(connection),
+                ],
+              ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 }

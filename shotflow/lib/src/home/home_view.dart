@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:provider/provider.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:shotflow/src/home/custom_animations.dart';
 import 'package:shotflow/src/home/disconnected_overlay.dart';
 
 import '../connection/connection_controller.dart';
+import 'messages/messages_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 import 'shotlist/shotlist_view.dart';
-import 'messages/messages_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -46,24 +45,26 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   Widget getMessagesDestination() {
     return NavigationDestination(
       icon: ScaleTransition(
-          scale: _messagesAnimation,
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 500),
-            child: Consumer<ConnectionController>(
-                builder: (context, connection, child) {
+        scale: _messagesAnimation,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: Consumer<ConnectionController>(
+            builder: (context, connection, child) {
               if (connection.unreadMessages == 0) {
                 return currentPageIndex == 0
-                    ? Icon(Icons.message, key: ValueKey<int>(1))
-                    : Icon(Icons.message_outlined, key: ValueKey<int>(0));
+                    ? const Icon(Icons.message, key: ValueKey<int>(1))
+                    : const Icon(Icons.message_outlined, key: ValueKey<int>(0));
               }
               return Badge(
                 label: Text(connection.unreadMessages.toString()),
                 child: currentPageIndex == 0
-                    ? Icon(Icons.message, key: ValueKey<int>(1))
-                    : Icon(Icons.message_outlined, key: ValueKey<int>(0)),
+                    ? const Icon(Icons.message, key: ValueKey<int>(1))
+                    : const Icon(Icons.message_outlined, key: ValueKey<int>(0)),
               );
-            }),
-          )),
+            },
+          ),
+        ),
+      ),
       label: AppLocalizations.of(context)!.messagesLabel,
     );
   }
@@ -71,14 +72,15 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   Widget getShotlistDestination() {
     return NavigationDestination(
       icon: RotationTransition(
-          turns: _shotlistAnimation,
-          alignment: Alignment.bottomCenter,
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 500),
-            child: currentPageIndex == 1
-                ? Icon(Icons.videocam_rounded, key: ValueKey<int>(1))
-                : Icon(Icons.videocam_outlined, key: ValueKey<int>(0)),
-          )),
+        turns: _shotlistAnimation,
+        alignment: Alignment.bottomCenter,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: currentPageIndex == 1
+              ? const Icon(Icons.videocam_rounded, key: ValueKey<int>(1))
+              : const Icon(Icons.videocam_outlined, key: ValueKey<int>(0)),
+        ),
+      ),
       label: AppLocalizations.of(context)!.shotlistLabel,
     );
   }
@@ -86,13 +88,14 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   Widget getSettingsDestination() {
     return NavigationDestination(
       icon: RotationTransition(
-          turns: _settingsAnimation,
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 500),
-            child: currentPageIndex == 2
-                ? Icon(Icons.settings, key: ValueKey<int>(1))
-                : Icon(Icons.settings_outlined, key: ValueKey<int>(0)),
-          )),
+        turns: _settingsAnimation,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: currentPageIndex == 2
+              ? const Icon(Icons.settings, key: ValueKey<int>(1))
+              : const Icon(Icons.settings_outlined, key: ValueKey<int>(0)),
+        ),
+      ),
       label: AppLocalizations.of(context)!.settingsLabel,
     );
   }
@@ -130,54 +133,58 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       switch (currentPageIndex) {
         case 0:
           _messagesController.repeat(count: 1);
-          break;
         case 1:
           _shotlistController.repeat(count: 1);
-          break;
         case 2:
           _settingsController.repeat(count: 1);
-          break;
       }
     });
 
-    return Stack(children: [
-      Scaffold(
-        bottomNavigationBar: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          selectedIndex: currentPageIndex,
-          destinations: <Widget>[
-            getMessagesDestination(),
-            getShotlistDestination(),
-            getSettingsDestination(),
-          ],
-        ),
-        body: SafeArea(
-          child: Stack(children: [
-            AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              child: <Widget>[
-                MessagesView(),
-                ShotlistView(),
-                Consumer<SettingsController>(
-                    builder: (context, settings, child) {
-                  return SettingsView(controller: settings);
-                }),
-              ][currentPageIndex],
+    return Stack(
+      children: [
+        Scaffold(
+          bottomNavigationBar: NavigationBar(
+            onDestinationSelected: (index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            selectedIndex: currentPageIndex,
+            destinations: <Widget>[
+              getMessagesDestination(),
+              getShotlistDestination(),
+              getSettingsDestination(),
+            ],
+          ),
+          body: SafeArea(
+            child: Stack(
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: <Widget>[
+                    const MessagesView(),
+                    const ShotlistView(),
+                    Consumer<SettingsController>(
+                      builder: (context, settings, child) {
+                        return SettingsView(controller: settings);
+                      },
+                    ),
+                  ][currentPageIndex],
+                ),
+                getTallyOverlay(),
+              ],
             ),
-            getTallyOverlay()
-          ]),
+          ),
         ),
-      ),
-      Consumer<ConnectionController>(builder: (context, connection, child) {
-        if (connection.isConnected) {
-          return Container();
-        }
-        return DisconnectedOverlay(connection: connection);
-      })
-    ]);
+        Consumer<ConnectionController>(
+          builder: (context, connection, child) {
+            if (connection.isConnected) {
+              return Container();
+            }
+            return DisconnectedOverlay(connection: connection);
+          },
+        ),
+      ],
+    );
   }
 }

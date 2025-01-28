@@ -1,12 +1,11 @@
 class ShotlistEntry {
-  final int id;
-  final String title;
-  final int operatorId;
-  final String operatorName;
-  final int duration;
-
   ShotlistEntry(
-      this.id, this.title, this.operatorId, this.operatorName, this.duration);
+    this.id,
+    this.title,
+    this.operatorId,
+    this.operatorName,
+    this.duration,
+  );
 
   factory ShotlistEntry.fromJson(Map<String, dynamic> json) {
     return ShotlistEntry(
@@ -17,6 +16,11 @@ class ShotlistEntry {
       json['duration'] as int,
     );
   }
+  final int id;
+  final String title;
+  final int operatorId;
+  final String operatorName;
+  final int duration;
 }
 
 enum ConnectionResult {
@@ -26,19 +30,23 @@ enum ConnectionResult {
 }
 
 class ChatMessage {
-  ChatMessage(
-      {required this.isOperator, required this.text, required this.name});
+  ChatMessage({
+    required this.isOperator,
+    required this.text,
+    required this.name,
+  });
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    return ChatMessage(
+      isOperator: json['sender'] == 'You',
+      text: json['message'].toString(),
+      name: json['sender'].toString(),
+    );
+  }
 
   final bool isOperator;
   final String name;
   final String text;
-
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    return ChatMessage(
-        isOperator: json['sender'] == "You",
-        text: json['message'],
-        name: json['sender']);
-  }
 
   Map<String, dynamic> toJson() {
     return {

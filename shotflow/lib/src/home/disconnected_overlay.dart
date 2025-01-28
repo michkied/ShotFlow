@@ -3,12 +3,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shotflow/src/connection/connection_controller.dart';
 
 class DisconnectedOverlay extends StatelessWidget {
-  final ConnectionController connection;
-
   const DisconnectedOverlay({
     super.key,
     required this.connection,
   });
+  final ConnectionController connection;
 
   @override
   Widget build(BuildContext context) {
@@ -20,48 +19,47 @@ class DisconnectedOverlay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               DefaultTextStyle(
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
                 child: Text(AppLocalizations.of(context)!.connectionLost),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 child: Text(AppLocalizations.of(context)!.goToLoginPage),
               ),
-              SizedBox(height: 60),
+              const SizedBox(height: 60),
               if (connection.isReconnecting) ...[
                 DefaultTextStyle(
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                   child:
                       Text(AppLocalizations.of(context)!.attemptingToReconnect),
                 ),
-                SizedBox(height: 10),
-                SizedBox(
+                const SizedBox(height: 10),
+                const SizedBox(
                   height: 10,
                   child: CircularProgressIndicator(),
                 ),
               ] else ...[
                 DefaultTextStyle(
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
                   child:
                       Text(AppLocalizations.of(context)!.cantConnectToServer),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    connection.reconnect();
-                  },
+                  onPressed: connection.reconnect,
                   child: Text(AppLocalizations.of(context)!.tryAgain),
                 ),
-              ]
+              ],
             ],
           ),
         ),

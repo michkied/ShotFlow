@@ -39,16 +39,18 @@ void main() {
     test('should return default accent color if not set', () async {
       final color = await settingsService.accentColor();
       expect(
-          color,
-          Color.from(
-              alpha: Colors.blue.a,
-              red: Colors.blue.r,
-              green: Colors.blue.g,
-              blue: Colors.blue.b));
+        color,
+        Color.from(
+          alpha: Colors.blue.a,
+          red: Colors.blue.r,
+          green: Colors.blue.g,
+          blue: Colors.blue.b,
+        ),
+      );
     });
 
     test('should update and return accent color', () async {
-      final newColor = Color.fromRGBO(255, 0, 0, 1);
+      const newColor = Color.fromRGBO(255, 0, 0, 1);
       await settingsService.updateAccentColor(newColor);
       final color = await settingsService.accentColor();
 
@@ -78,9 +80,8 @@ void main() {
   });
 
   group('SettingsController', () {
-    MockSettingsService mockSettingsService = MockSettingsService();
-    SettingsController settingsController =
-        SettingsController(mockSettingsService);
+    final mockSettingsService = MockSettingsService();
+    final settingsController = SettingsController(mockSettingsService);
 
     test('loadSettings should load settings from the service', () async {
       when(mockSettingsService.themeMode())
@@ -121,7 +122,7 @@ void main() {
       await settingsController.updateLocale(SupportedLocales.pl);
 
       expect(settingsController.localeType, SupportedLocales.pl);
-      expect(settingsController.locale, Locale('pl'));
+      expect(settingsController.locale, const Locale('pl'));
       verify(mockSettingsService.updateLocaleType(SupportedLocales.pl))
           .called(1);
     });

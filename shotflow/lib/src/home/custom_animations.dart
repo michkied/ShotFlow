@@ -2,25 +2,26 @@ import 'package:flutter/material.dart';
 
 class CustomAnimations {
   static Animation<double> getShotlistAnimation(
-      AnimationController controller) {
+    AnimationController controller,
+  ) {
     return TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: -0.05)
+        tween: Tween<double>(begin: 0, end: -0.05)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: -0.05, end: 0.05)
+        tween: Tween<double>(begin: -0.05, end: 0.05)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.05, end: -0.01)
+        tween: Tween<double>(begin: 0.05, end: -0.01)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: -0.015, end: 0.0)
+        tween: Tween<double>(begin: -0.015, end: 0)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
@@ -28,27 +29,29 @@ class CustomAnimations {
   }
 
   static Animation<double> getSettingsAnimation(
-      AnimationController controller) {
-    return Tween<double>(begin: 0.0, end: 0.5)
+    AnimationController controller,
+  ) {
+    return Tween<double>(begin: 0, end: 0.5)
         .chain(CurveTween(curve: Curves.elasticInOut))
         .animate(controller);
   }
 
   static Animation<double> getMessagesAnimation(
-      AnimationController controller) {
+    AnimationController controller,
+  ) {
     return TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.8)
+        tween: Tween<double>(begin: 1, end: 0.8)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.8, end: 1.1)
+        tween: Tween<double>(begin: 0.8, end: 1.1)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.1, end: 1.0)
+        tween: Tween<double>(begin: 1.1, end: 1)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 30,
       ),
